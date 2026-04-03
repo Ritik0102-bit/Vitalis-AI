@@ -21,8 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeSidebarBtn = document.querySelector(".close-sidebar-btn");
     const quickPromptBtns = document.querySelectorAll(".quick-prompt-btn");
 
-    // Existing API Key (Preserved for user)
-    const API_KEY = "[ENCRYPTION_KEY]";
+    // API key has been moved securely to Vercel Serverless Backend
 
     let currentBase64Image = null;
     let currentMimeType = null;
@@ -244,38 +243,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* -------------------------------------
-       GEMINI API INTEGRAION (Multimodal)
+       BACKEND SECURE PROXY INTEGRATION 
        ------------------------------------- */
     async function fetchAiDiagnosis(symptomsText, base64Image, mimeType) {
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+        const apiUrl = "/api/chat";
 
-        let promptText = `You are Vitalis, an advanced Medical AI Assistant. 
-The patient is reporting the following query/symptoms: "${symptomsText || "Please analyze the attached image."}"
-
-`;
-        if (base64Image) {
-            promptText += `An image of a medical report, prescription, or relevant health context is attached. First, extract and summarize the key findings or text from the image. Then, provide your medical insights. `;
-        }
-        
-        promptText += `
-Please provide your response following these rules:
-1. Extract/Analyze Image (if provided)
-2. Potential Condition(s): Give a list of likely conditions based on text and image.
-3. Precautions & Recommendations: Suggest safe home remedies or immediate steps.
-4. Medical Disclaimer.
-
-Use ONLY clean HTML for formatting (<strong>, <ul>, <li>, <br>). No markdown! Make it look like a professional health report.`;
-
-        const parts = [{ text: promptText }];
-        
+        // If an image is provided, strip the base64 URI prefix to send pure data
+        let b64Data = null;
         if (base64Image && mimeType) {
-            const b64Data = base64Image.split(',')[1];
-            parts.push({
-                inlineData: {
-                    mimeType: mimeType,
-                    data: b64Data
-                }
-            });
+            b64Data = base64Image.split(',')[1];
         }
 
         try {
@@ -283,30 +259,29 @@ Use ONLY clean HTML for formatting (<strong>, <ul>, <li>, <br>). No markdown! Ma
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{ parts: parts }],
-                    generationConfig: { temperature: 0.2 }
+                    symptomsText: symptomsText,
+                    base64Image: b64Data,
+                    mimeType: mimeType
                 })
             });
 
             if (!response.ok) {
                 const errData = await response.json();
-                console.error("API response error:", errData);
+                console.error("API proxy error:", errData);
                 return "<span style='color: #ef4444;'>Connection Error. The AI brain is currently unreachable.</span>";
             }
 
             const data = await response.json();
             
-            if (data && data.candidates && data.candidates.length > 0) {
-                let aiResponse = data.candidates[0].content.parts[0].text;
-                aiResponse = aiResponse.replace(/```html/gi, "").replace(/```/gi, "").trim();
-                return aiResponse;
+            if (data && data.reply) {
+                return data.reply;
             } else {
-                return "I'm sorry, I couldn't formulate a diagnosis.";
+                return "I'm sorry, I couldn't formulate a diagnosis framework.";
             }
 
         } catch (error) {
-            console.error("Error making API request:", error);
-            return "<span style='color: #ef4444;'>Network error: Unable to reach the API server.</span>";
+            console.error("Error making API request to backend:", error);
+            return "<span style='color: #ef4444;'>Network error: Unable to reach the server backend.</span>";
         }
     }
 
