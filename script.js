@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    /* DOM Elements setup */
     const chatMessages = document.getElementById("chat-messages");
     const userInput = document.getElementById("user-input");
     const sendBtn = document.getElementById("send-btn");
@@ -13,8 +14,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const themeToggleBtn = document.getElementById("theme-toggle");
     const downloadPdfBtn = document.getElementById("download-pdf");
 
+    // Sidebars & Mobile Elements
+    const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+    const leftSidebar = document.getElementById("left-sidebar");
+    const mobileOverlay = document.getElementById("mobile-overlay");
+    const closeSidebarBtn = document.querySelector(".close-sidebar-btn");
+    const quickPromptBtns = document.querySelectorAll(".quick-prompt-btn");
+
     // Existing API Key (Preserved for user)
-    const API_KEY = "AIzaSyCbO9rg06monO_rS4x_B1gqaY4dKfE58vw";
+    const API_KEY = "[ENCRYPTION_KEY]";
 
     let currentBase64Image = null;
     let currentMimeType = null;
@@ -27,7 +35,37 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => toast.classList.remove("show"), 3000);
     }
 
-    // Initial greeting
+    /* -------------------------------------
+       MOBILE NAVIGATION LOGIC
+       ------------------------------------- */
+    function toggleSidebar() {
+        leftSidebar.classList.toggle("active");
+        mobileOverlay.classList.toggle("active");
+    }
+
+    if (mobileMenuBtn) mobileMenuBtn.addEventListener("click", toggleSidebar);
+    if (closeSidebarBtn) closeSidebarBtn.addEventListener("click", toggleSidebar);
+    if (mobileOverlay) mobileOverlay.addEventListener("click", toggleSidebar);
+
+
+    /* -------------------------------------
+       QUICK PROMPTS INJECTION LOGIC
+       ------------------------------------- */
+    quickPromptBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const presetText = btn.getAttribute("data-text");
+            // If on mobile, close sidebar after clicking
+            if(window.innerWidth <= 1024) { toggleSidebar(); }
+            // Auto inject and send
+            userInput.value = presetText;
+            handleSend();
+        });
+    });
+
+
+    /* -------------------------------------
+       INITIALIZATION
+       ------------------------------------- */
     setTimeout(() => {
         addTypingIndicator();
         setTimeout(() => {
@@ -61,7 +99,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         showToast("Generating PDF... Please wait.");
         
-        // We configure html2pdf
         const opt = {
             margin:       10,
             filename:     'Vitalis-AI-Diagnoses-Session.pdf',
@@ -70,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         
-        // Target the chat messages container to convert
         html2pdf().set(opt).from(chatMessages).save().then(() => {
             showToast("PDF downloaded successfully!");
         }).catch((err) => {
@@ -92,17 +128,14 @@ document.addEventListener("DOMContentLoaded", () => {
             content += `<img src="${imageSrc}" class="user-img-attachment">`;
         }
         
-        // Quickly parse bold text natively for the intro msg without needing a markdown library
         let parsedText = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
 
         if (isHTML || sender === "bot") {
-            // Because our bot logic also returns parsed HTML, we allow it here.
             msgDiv.innerHTML = content + parsedText;
         } else {
             if (imageSrc) {
                 msgDiv.innerHTML = content;
-                const textNode = document.createTextNode(text);
-                msgDiv.appendChild(textNode);
+                msgDiv.appendChild(document.createTextNode(text));
             } else {
                 msgDiv.textContent = text;
             }
@@ -233,7 +266,6 @@ Please provide your response following these rules:
 
 Use ONLY clean HTML for formatting (<strong>, <ul>, <li>, <br>). No markdown! Make it look like a professional health report.`;
 
-        // Build Payload
         const parts = [{ text: promptText }];
         
         if (base64Image && mimeType) {

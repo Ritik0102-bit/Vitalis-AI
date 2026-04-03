@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- html2pdf.js for downloading the session as PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
@@ -22,61 +21,124 @@
         <i class="fa-solid fa-stethoscope float-item" style="top: 50%; left: 5%; animation-delay: 5s;"></i>
     </div>
 
-    <div class="chat-container">
-        <!-- Floating Glass Header -->
-        <div class="chat-header">
-            <div class="header-info">
-                <div class="avatar-glow">
-                    <div class="avatar"><i class="fa-solid fa-heart-pulse"></i></div>
+    <!-- Main Dashboard Layout -->
+    <div class="app-wrapper">
+        
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobile-overlay"></div>
+
+        <!-- Left Sidebar -->
+        <aside class="sidebar left-sidebar" id="left-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
+                <button class="close-sidebar-btn d-mobile-only"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="sidebar-content">
+                <div class="card">
+                    <h4>Direct Prompts</h4>
+                    <p class="text-sm mock-text">Click to instantly consult the AI.</p>
+                    <button class="quick-prompt-btn" data-text="I am experiencing a severe headache and fever.">
+                        <i class="fa-solid fa-head-side-virus"></i> Headache & Fever
+                    </button>
+                    <button class="quick-prompt-btn" data-text="I have an upset stomach and feel nauseous.">
+                        <i class="fa-solid fa-stomach"></i> Stomach Issues
+                    </button>
+                    <button class="quick-prompt-btn" data-text="Analyze this medical prescription I have attached.">
+                        <i class="fa-solid fa-file-prescription"></i> Scan Document
+                    </button>
                 </div>
-                <div>
-                    <h2>Vitalis AI</h2>
-                    <span class="status">System Online</span>
+                <div class="card emergency-card">
+                    <h4><i class="fa-solid fa-phone-volume"></i> Emergency</h4>
+                    <p class="text-sm">In a life-threatening situation, immediately call local emergency services (e.g. 911 / 112).</p>
                 </div>
             </div>
-            <div class="header-controls">
-                <button id="theme-toggle" class="icon-btn" title="Toggle Light/Dark Mode"><i class="fa-solid fa-moon"></i></button>
-                <button id="download-pdf" class="icon-btn" title="Download Session as PDF"><i class="fa-solid fa-file-pdf"></i></button>
-                <button id="clear-chat" class="icon-btn" title="Clear Session"><i class="fa-solid fa-eraser"></i></button>
+        </aside>
+
+        <!-- Center Main Column -->
+        <main class="chat-container">
+            <div class="chat-header">
+                <div class="header-info">
+                    <!-- Hamburger Menu for Mobile -->
+                    <button id="mobile-menu-btn" class="icon-btn d-mobile-only" title="Menu"><i class="fa-solid fa-bars"></i></button>
+                    
+                    <div class="avatar-glow">
+                        <div class="avatar"><i class="fa-solid fa-heart-pulse"></i></div>
+                    </div>
+                    <div>
+                        <h2>Vitalis AI</h2>
+                        <span class="status">System Online</span>
+                    </div>
+                </div>
+                <div class="header-controls">
+                    <button id="theme-toggle" class="icon-btn" title="Toggle Light/Dark Mode"><i class="fa-solid fa-moon"></i></button>
+                    <button id="download-pdf" class="icon-btn" title="Download Session as PDF"><i class="fa-solid fa-file-pdf"></i></button>
+                    <button id="clear-chat" class="icon-btn" title="Clear Session"><i class="fa-solid fa-eraser"></i></button>
+                </div>
             </div>
-        </div>
 
-        <!-- Chat Area -->
-        <div class="chat-messages" id="chat-messages">
-            <!-- Messages will be injected here -->
-        </div>
-
-        <!-- Image Preview Container (Hidden by default) -->
-        <div class="preview-container" id="preview-container" style="display: none;">
-            <div class="preview-box">
-                <img id="image-preview" src="" alt="Report Preview">
-                <button id="remove-image" class="remove-btn" title="Remove Attachment"><i class="fa-solid fa-xmark"></i></button>
+            <div class="chat-messages" id="chat-messages">
+                <!-- Messages will be injected here -->
             </div>
-            <span class="preview-text">Attachment ready</span>
-        </div>
 
-        <!-- Input Area -->
-        <div class="chat-input-container">
-            <!-- Hidden file input -->
-            <input type="file" id="file-input" accept="image/png, image/jpeg, image/webp" style="display: none;">
-            
-            <button id="upload-btn" class="action-btn" title="Upload Report/Prescription">
-                <i class="fa-solid fa-paperclip"></i>
-            </button>
-            
-            <button id="mic-btn" class="action-btn" title="Voice Input">
-                <i class="fa-solid fa-microphone"></i>
-            </button>
+            <div class="preview-container" id="preview-container" style="display: none;">
+                <div class="preview-box">
+                    <img id="image-preview" src="" alt="Report Preview">
+                    <button id="remove-image" class="remove-btn" title="Remove Attachment"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <span class="preview-text">Attachment ready</span>
+            </div>
 
-            <input type="text" id="user-input" placeholder="Type or describe your symptoms..." autocomplete="off">
-            
-            <button id="send-btn" class="send-btn" title="Send Message">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
-        </div>
+            <div class="chat-input-container">
+                <input type="file" id="file-input" accept="image/png, image/jpeg, image/webp" style="display: none;">
+                
+                <button id="upload-btn" class="action-btn" title="Upload Report/Prescription">
+                    <i class="fa-solid fa-paperclip"></i>
+                </button>
+                
+                <button id="mic-btn" class="action-btn" title="Voice Input">
+                    <i class="fa-solid fa-microphone"></i>
+                </button>
+
+                <input type="text" id="user-input" placeholder="Type or describe your symptoms..." autocomplete="off">
+                
+                <button id="send-btn" class="send-btn" title="Send Message">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar right-sidebar" id="right-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fa-solid fa-circle-info"></i> Information</h3>
+            </div>
+            <div class="sidebar-content">
+                <div class="card status-card">
+                    <div class="status-indicator">
+                        <i class="fa-solid fa-server"></i>
+                        <span>AI Engine: <strong>Gemini 2.5 Flash</strong></span>
+                    </div>
+                    <div class="status-indicator">
+                        <i class="fa-solid fa-shield-cat"></i>
+                        <span>Secure Mode: <strong>Active</strong></span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4>🩺 Daily Tip</h4>
+                    <p class="text-sm mock-text">Stay hydrated! Drinking 8 glasses of water a day maintains energy levels and brain function.</p>
+                </div>
+
+                <div class="card disclaimer-card">
+                    <h4>⚠️ Disclaimer</h4>
+                    <p class="text-sm mock-text">Vitalis is an AI built for INT 428 and educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment.</p>
+                </div>
+            </div>
+        </aside>
+
     </div>
     
-    <!-- Toast Notification for Errors -->
+    <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
     <script src="script.js"></script>
