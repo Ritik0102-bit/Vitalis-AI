@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitalis AI - Health Assistant</title>
+    <meta name="description" content="AI Symptom Checker - A modern health assistant to analyze symptoms and reports.">
+    
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js for downloading the session as PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <!-- Floating Background Elements -->
+    <div class="floating-bg">
+        <i class="fa-solid fa-notes-medical float-item" style="top: 15%; left: 10%; animation-delay: 0s;"></i>
+        <i class="fa-solid fa-pills float-item" style="top: 70%; left: 85%; animation-delay: 2s; font-size: 3rem;"></i>
+        <i class="fa-solid fa-heart-pulse float-item" style="top: 80%; left: 15%; animation-delay: 4s;"></i>
+        <i class="fa-solid fa-staff-snake float-item" style="top: 20%; left: 80%; animation-delay: 1s;"></i>
+        <i class="fa-solid fa-stethoscope float-item" style="top: 50%; left: 5%; animation-delay: 5s;"></i>
+    </div>
+
+    <div class="chat-container">
+        <!-- Floating Glass Header -->
+        <div class="chat-header">
+            <div class="header-info">
+                <div class="avatar-glow">
+                    <div class="avatar"><i class="fa-solid fa-heart-pulse"></i></div>
+                </div>
+                <div>
+                    <h2>Vitalis AI</h2>
+                    <span class="status">System Online</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button id="theme-toggle" class="icon-btn" title="Toggle Light/Dark Mode"><i class="fa-solid fa-moon"></i></button>
+                <button id="download-pdf" class="icon-btn" title="Download Session as PDF"><i class="fa-solid fa-file-pdf"></i></button>
+                <button id="clear-chat" class="icon-btn" title="Clear Session"><i class="fa-solid fa-eraser"></i></button>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be injected here -->
+        </div>
+
+        <!-- Image Preview Container (Hidden by default) -->
+        <div class="preview-container" id="preview-container" style="display: none;">
+            <div class="preview-box">
+                <img id="image-preview" src="" alt="Report Preview">
+                <button id="remove-image" class="remove-btn" title="Remove Attachment"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <span class="preview-text">Attachment ready</span>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input-container">
+            <!-- Hidden file input -->
+            <input type="file" id="file-input" accept="image/png, image/jpeg, image/webp" style="display: none;">
+            
+            <button id="upload-btn" class="action-btn" title="Upload Report/Prescription">
+                <i class="fa-solid fa-paperclip"></i>
+            </button>
+            
+            <button id="mic-btn" class="action-btn" title="Voice Input">
+                <i class="fa-solid fa-microphone"></i>
+            </button>
+
+            <input type="text" id="user-input" placeholder="Type or describe your symptoms..." autocomplete="off">
+            
+            <button id="send-btn" class="send-btn" title="Send Message">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Toast Notification for Errors -->
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
