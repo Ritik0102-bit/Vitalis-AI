@@ -83,9 +83,9 @@ body {
 .float-item {
     position: absolute;
     color: var(--primary-glow);
-    opacity: 0.05;
+    opacity: 0.08;
     font-size: 4rem;
-    animation: float 20s infinite ease-in-out alternate, spin 40s infinite linear;
+    animation: float 8s infinite ease-in-out alternate, spin 15s infinite linear;
 }
 
 .light-theme .float-item { opacity: 0.08; }
@@ -114,6 +114,12 @@ body {
     padding: 0 20px;
     gap: 20px;
     z-index: 10;
+    animation: dashboardEnter 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes dashboardEnter {
+    from { opacity: 0; transform: translateY(40px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* Sidebar General */
@@ -290,6 +296,27 @@ body {
 }
 #theme-toggle:hover { color: #facc15; background: rgba(250, 204, 21, 0.15); }
 #download-pdf:hover { color: #3b82f6; background: rgba(59, 130, 246, 0.15); }
+
+/* Language Selector Styles */
+.lang-select {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+    border: var(--glass-border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    margin-right: 8px;
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+.lang-select:hover { background: rgba(255, 255, 255, 0.1); }
+.lang-select option { background: #1e1e24; color: #ffffff; }
+
+.light-theme .lang-select { background: rgba(0, 0, 0, 0.05); color: #1e293b; border-color: rgba(0,0,0,0.1); }
+.light-theme .lang-select:hover { background: rgba(0, 0, 0, 0.1); }
+.light-theme .lang-select option { background: #ffffff; color: #1e293b; }
 
 /* Messages Area */
 .chat-messages {
