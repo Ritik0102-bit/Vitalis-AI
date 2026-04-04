@@ -19,6 +19,9 @@
         <i class="fa-solid fa-heart-pulse float-item" style="top: 80%; left: 15%; animation-delay: 4s;"></i>
         <i class="fa-solid fa-staff-snake float-item" style="top: 20%; left: 80%; animation-delay: 1s;"></i>
         <i class="fa-solid fa-stethoscope float-item" style="top: 50%; left: 5%; animation-delay: 5s;"></i>
+        <i class="fa-solid fa-dna float-item" style="top: 35%; left: 90%; animation-delay: 3s; font-size: 2rem; opacity: 0.15;"></i>
+        <i class="fa-solid fa-microscope float-item" style="top: 10%; left: 50%; animation-delay: 6s; opacity: 0.1;"></i>
+        <i class="fa-solid fa-truck-medical float-item" style="top: 85%; left: 60%; animation-delay: 2.5s; opacity: 0.15;"></i>
     </div>
 
     <!-- Main Dashboard Layout -->
@@ -41,7 +44,7 @@
                         <i class="fa-solid fa-head-side-virus"></i> Headache & Fever
                     </button>
                     <button class="quick-prompt-btn" data-text="I have an upset stomach and feel nauseous.">
-                        <i class="fa-solid fa-stomach"></i> Stomach Issues
+                        <i class="fa-solid fa-virus"></i> Stomach Issues
                     </button>
                     <button class="quick-prompt-btn" data-text="Analyze this medical prescription I have attached.">
                         <i class="fa-solid fa-file-prescription"></i> Scan Document
@@ -70,6 +73,14 @@
                     </div>
                 </div>
                 <div class="header-controls">
+                    <select id="language-select" class="lang-select" title="Language" style="background: var(--bg-card); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 4px 8px; margin-right: 8px; outline: none; cursor: pointer; font-family: inherit;">
+                        <option value="English">🇬🇧 EN</option>
+                        <option value="Spanish">🇪🇸 ES</option>
+                        <option value="French">🇫🇷 FR</option>
+                        <option value="Hindi">🇮🇳 HI</option>
+                        <option value="Chinese">🇨🇳 CN</option>
+                        <option value="Arabic">🇸🇦 AR</option>
+                    </select>
                     <button id="theme-toggle" class="icon-btn" title="Toggle Light/Dark Mode"><i class="fa-solid fa-moon"></i></button>
                     <button id="download-pdf" class="icon-btn" title="Download Session as PDF"><i class="fa-solid fa-file-pdf"></i></button>
                     <button id="clear-chat" class="icon-btn" title="Clear Session"><i class="fa-solid fa-eraser"></i></button>
@@ -131,7 +142,7 @@
 
                 <div class="card disclaimer-card">
                     <h4>⚠️ Disclaimer</h4>
-                    <p class="text-sm mock-text">Vitalis is an AI built for INT 428 and educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment.</p>
+                    <p class="text-sm mock-text">Vitalis is an AI built for educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment.</p>
                 </div>
             </div>
         </aside>

@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { symptomsText, base64Image, mimeType } = req.body;
+        const { symptomsText, base64Image, mimeType, language = "English" } = req.body;
 
         // Retrieve key from Vercel Environment Variables
         const API_KEY = process.env.API_KEY;
@@ -20,6 +20,7 @@ export default async function handler(req, res) {
         // Construct the prompt
         let promptText = `**Persona:** You are Vitalis, a highly efficient, empathetic, and professional Medical AI Assistant. Keep your descriptions concise and avoid unnecessary jargon or lengthy paragraphs.
 **Context:** The patient is reporting the following symptoms/query: "${symptomsText || "Please analyze the attached image."}"
+**Language Requirement:** You must provide your ENTIRE final response translated into ${language}.
 `;
         if (base64Image) {
             promptText += `Additional Context: An image of a medical document, prescription, or physical symptom is attached.

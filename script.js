@@ -253,6 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (base64Image && mimeType) {
             b64Data = base64Image.split(',')[1];
         }
+        
+        const selectedLanguage = document.getElementById("language-select") ? document.getElementById("language-select").value : "English";
 
         try {
             const response = await fetch(apiUrl, {
@@ -261,7 +263,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({
                     symptomsText: symptomsText,
                     base64Image: b64Data,
-                    mimeType: mimeType
+                    mimeType: mimeType,
+                    language: selectedLanguage
                 })
             });
 
