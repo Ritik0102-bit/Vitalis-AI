@@ -37,7 +37,7 @@
                 <button class="close-sidebar-btn d-mobile-only"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="sidebar-content">
-                <div class="card">
+                <div class="card" style="max-height: 400px; overflow-y: auto;">
                     <h4>Direct Prompts</h4>
                     <p class="text-sm mock-text">Click to instantly consult the AI.</p>
                     <button class="quick-prompt-btn" data-text="I am experiencing a severe headache and fever.">
@@ -45,6 +45,15 @@
                     </button>
                     <button class="quick-prompt-btn" data-text="I have an upset stomach and feel nauseous.">
                         <i class="fa-solid fa-virus"></i> Stomach Issues
+                    </button>
+                    <button class="quick-prompt-btn" data-text="I have a sore throat, runny nose, and a persistent cough.">
+                        <i class="fa-solid fa-lungs-virus"></i> Cold & Cough
+                    </button>
+                    <button class="quick-prompt-btn" data-text="I have pain and aching in my joints and muscles.">
+                        <i class="fa-solid fa-bone"></i> Joint / Muscle Pain
+                    </button>
+                    <button class="quick-prompt-btn" data-text="I have developed a skin rash that is red and itchy.">
+                        <i class="fa-solid fa-hand-dots"></i> Skin Rash / Allergy
                     </button>
                     <button class="quick-prompt-btn" data-text="Analyze this medical prescription I have attached.">
                         <i class="fa-solid fa-file-prescription"></i> Scan Document
@@ -99,6 +108,8 @@
                 <span class="preview-text">Attachment ready</span>
             </div>
 
+            <div id="suggestion-chips" class="suggestion-chips"></div>
+            
             <div class="chat-input-container">
                 <input type="file" id="file-input" accept="image/png, image/jpeg, image/webp" style="display: none;">
                 
@@ -106,6 +117,14 @@
                     <i class="fa-solid fa-paperclip"></i>
                 </button>
                 
+                <button id="body-map-btn" class="action-btn" title="Interactive Body Map">
+                    <i class="fa-solid fa-child"></i>
+                </button>
+
+                <button id="pain-btn" class="action-btn" title="Visual Pain Scale">
+                    <i class="fa-solid fa-temperature-half"></i>
+                </button>
+
                 <button id="mic-btn" class="action-btn" title="Voice Input">
                     <i class="fa-solid fa-microphone"></i>
                 </button>
@@ -149,6 +168,52 @@
 
     </div>
     
+    <!-- Body Map Modal -->
+    <div id="body-map-modal" class="modal-overlay">
+        <div class="modal-content text-center">
+            <h3><i class="fa-solid fa-child"></i> Symptom Region Selector</h3>
+            <button class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+            <div class="body-map-wrap">
+                <svg viewBox="0 0 100 200" class="human-body-svg">
+                    <circle cx="50" cy="20" r="14" data-part="Head" class="body-part" />
+                    <!-- Neck -->
+                    <rect x="43" y="32" width="14" height="15" rx="3" data-part="Neck" class="body-part" />
+                    <!-- Chest -->
+                    <path d="M 30 46 Q 50 40 70 46 L 66 85 Q 50 95 34 85 Z" data-part="Chest" class="body-part" />
+                    <!-- Stomach -->
+                    <path d="M 34 85 Q 50 95 66 85 L 63 115 Q 50 120 37 115 Z" data-part="Stomach" class="body-part" />
+                    <!-- Left Arm -->
+                    <path d="M 30 46 Q 15 55 12 90 L 22 92 Q 25 70 34 80 Z" data-part="Left Arm" class="body-part" />
+                    <!-- Right Arm -->
+                    <path d="M 70 46 Q 85 55 88 90 L 78 92 Q 75 70 66 80 Z" data-part="Right Arm" class="body-part" />
+                    <!-- Left Leg -->
+                    <rect x="37" y="115" width="10" height="70" rx="4" data-part="Left Leg" class="body-part" />
+                    <!-- Right Leg -->
+                    <rect x="53" y="115" width="10" height="70" rx="4" data-part="Right Leg" class="body-part" />
+                </svg>
+            </div>
+            <p class="text-sm">Click the exact area where you are experiencing symptoms.</p>
+        </div>
+    </div>
+
+    <!-- Pain Slider Modal -->
+    <div id="pain-slider-modal" class="modal-overlay">
+        <div class="modal-content text-center">
+            <h3><i class="fa-solid fa-temperature-half"></i> Pain Intensity</h3>
+            <button class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+            <div class="pain-slider-wrap">
+                <div class="pain-face" id="pain-face-indicator">🙂</div>
+                <div class="pain-value" id="pain-value-text">Level 1 (Mild)</div>
+                <input type="range" id="pain-slider" min="1" max="10" value="1">
+                <div class="pain-scale-labels" style="display:flex; justify-content:space-between; width:100%; font-size:0.8rem; margin-bottom: 20px;">
+                    <span>Mild</span>
+                    <span>Severe</span>
+                </div>
+                <button id="submit-pain-btn" class="quick-prompt-btn" style="justify-content:center;">Submit Pain Level</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 

@@ -29,6 +29,8 @@ export default async function handler(req, res) {
 
         promptText += `**Task:** Analyze the provided context. Provide a brief, highly readable, and structured medical assessment.
 
+**RICH MEDIA RULE:** If the user explicitly asks for an exercise, stretch, or physical maneuver, you MUST embed a relevant YouTube video iframe using this format: <iframe class="bot-media-embed" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" allowfullscreen></iframe>. Estimate a good specific video ID for that maneuver.
+
 Please output your response strictly using clean HTML (do not use markdown). Follow this exact structure to ensure it is good-looking and readable:
 
 <div class="vitalis-report">
@@ -45,7 +47,9 @@ Please output your response strictly using clean HTML (do not use markdown). Fol
     <div style="background: rgba(255, 77, 79, 0.1); border-left: 4px solid #ff4d4f; padding: 12px; border-radius: 4px; font-size: 0.9em;">
         <strong>⚠️ Medical Disclaimer:</strong> I am an AI, not a doctor. Please consult a healthcare professional for an accurate diagnosis and treatment.
     </div>
-</div>`;
+</div>
+
+At the VERY END of your response, ALWAYS generate 3 short, helpful follow-up questions the user can ask, wrapped EXACTLY like this: [CHIP: Follow up 1][CHIP: Follow up 2][CHIP: Follow up 3]`;
 
         // Build Payload Array
         const parts = [{ text: promptText }];

@@ -21,6 +21,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeSidebarBtn = document.querySelector(".close-sidebar-btn");
     const quickPromptBtns = document.querySelectorAll(".quick-prompt-btn");
 
+    // Modal & Interactive Elements
+    const bodyMapBtn = document.getElementById("body-map-btn");
+    const bodyMapModal = document.getElementById("body-map-modal");
+    const painBtn = document.getElementById("pain-btn");
+    const painModal = document.getElementById("pain-slider-modal");
+    const closeBtns = document.querySelectorAll(".close-modal-btn");
+    const bodyParts = document.querySelectorAll(".body-part");
+
+    // Pain Slider Elements
+    const painSlider = document.getElementById("pain-slider");
+    const painFace = document.getElementById("pain-face-indicator");
+    const painValueText = document.getElementById("pain-value-text");
+    const submitPainBtn = document.getElementById("submit-pain-btn");
+
+    // Chips Container
+    const suggestionChips = document.getElementById("suggestion-chips");
+
     // API key has been moved securely to Vercel Serverless Backend
 
     let currentBase64Image = null;
@@ -53,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     quickPromptBtns.forEach(btn => {
         btn.addEventListener("click", () => {
             const presetText = btn.getAttribute("data-text");
+            if (!presetText) return;
             // If on mobile, close sidebar after clicking
             if(window.innerWidth <= 1024) { toggleSidebar(); }
             // Auto inject and send
@@ -60,6 +78,78 @@ document.addEventListener("DOMContentLoaded", () => {
             handleSend();
         });
     });
+
+    /* -------------------------------------
+       MODALS, MAPS & SLIDER LOGIC
+       ------------------------------------- */
+    function openModal(modal) { if(modal) modal.classList.add("active"); }
+    function closeModal(modal) { if(modal) modal.classList.remove("active"); }
+
+    if (bodyMapBtn) bodyMapBtn.addEventListener("click", () => openModal(bodyMapModal));
+    if (painBtn) painBtn.addEventListener("click", () => openModal(painModal));
+
+    if (closeBtns) {
+        closeBtns.forEach(btn => {
+            btn.addEventListener("click", (e) => closeModal(e.target.closest(".modal-overlay")));
+        });
+    }
+
+    if (bodyParts) {
+        bodyParts.forEach(part => {
+            part.addEventListener("click", (e) => {
+                const partName = e.target.getAttribute("data-part");
+                userInput.value = `I am experiencing pain or symptoms in my ${partName}.`;
+                closeModal(bodyMapModal);
+                handleSend();
+            });
+        });
+    }
+
+    const faces = ["🙂", "😐", "😕", "😟", "😣", "😖", "😫", "😩", "😭", "🤬"];
+    if (painSlider) {
+        painSlider.addEventListener("input", (e) => {
+            const val = parseInt(e.target.value);
+            if(painFace) painFace.textContent = faces[val - 1] || faces[9];
+            let severity = "Mild";
+            if (val > 3) severity = "Moderate";
+            if (val > 6) severity = "Severe";
+            if (val > 8) severity = "Excruciating";
+            if(painValueText) painValueText.textContent = `Level ${val} (${severity})`;
+        });
+        if (submitPainBtn) {
+            submitPainBtn.addEventListener("click", () => {
+                const val = painSlider.value;
+                userInput.value = `My current pain intensity is ${val}/10.`;
+                closeModal(painModal);
+                handleSend();
+            });
+        }
+    }
+
+    /* -------------------------------------
+       SUGGESTION CHIPS LOGIC
+       ------------------------------------- */
+    function renderChips(chips) {
+        if (!suggestionChips) return;
+        suggestionChips.innerHTML = "";
+        if (!chips || chips.length === 0) {
+            suggestionChips.style.display = "none";
+            return;
+        }
+        suggestionChips.style.display = "flex";
+        
+        chips.forEach(chipText => {
+            const btn = document.createElement("button");
+            btn.className = "chip-btn";
+            btn.textContent = chipText;
+            btn.addEventListener("click", () => {
+                userInput.value = chipText;
+                suggestionChips.style.display = "none";
+                handleSend();
+            });
+            suggestionChips.appendChild(btn);
+        });
+    }
 
 
     /* -------------------------------------
@@ -315,10 +405,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         addTypingIndicator();
 
-        const responseHTML = await fetchAiDiagnosis(text, imageToDisplay, attachedMimeType);
+        let responseHTML = await fetchAiDiagnosis(text, imageToDisplay, attachedMimeType);
         
+        // Extract chips from the response using Regex
+        const chipRegex = /\[CHIP:\s*(.*?)\]/g;
+        let match;
+        let chips = [];
+        while ((match = chipRegex.exec(responseHTML)) !== null) {
+            chips.push(match[1]);
+        }
+        
+        // Clean out the logic chips from the visible HTML
+        responseHTML = responseHTML.replace(chipRegex, "").trim();
+
         removeTypingIndicator();
         addMessage(responseHTML, "bot", true);
+        renderChips(chips);
 
         userInput.disabled = false;
         sendBtn.disabled = false;
