@@ -12,16 +12,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-    <!-- Floating Background Elements -->
+    <!-- Floating Background Medical Images -->
     <div class="floating-bg">
+        <!-- Floating FontAwesome icons (subtle) -->
         <i class="fa-solid fa-notes-medical float-item" style="top: 15%; left: 10%; animation-delay: 0s;"></i>
         <i class="fa-solid fa-pills float-item" style="top: 70%; left: 85%; animation-delay: 2s; font-size: 3rem;"></i>
-        <i class="fa-solid fa-heart-pulse float-item" style="top: 80%; left: 15%; animation-delay: 4s;"></i>
-        <i class="fa-solid fa-staff-snake float-item" style="top: 20%; left: 80%; animation-delay: 1s;"></i>
         <i class="fa-solid fa-stethoscope float-item" style="top: 50%; left: 5%; animation-delay: 5s;"></i>
-        <i class="fa-solid fa-dna float-item" style="top: 35%; left: 90%; animation-delay: 3s; font-size: 2rem; opacity: 0.15;"></i>
-        <i class="fa-solid fa-microscope float-item" style="top: 10%; left: 50%; animation-delay: 6s; opacity: 0.1;"></i>
-        <i class="fa-solid fa-truck-medical float-item" style="top: 85%; left: 60%; animation-delay: 2.5s; opacity: 0.15;"></i>
+        <i class="fa-solid fa-truck-medical float-item" style="top: 85%; left: 60%; animation-delay: 2.5s;"></i>
+        <!-- Floating Medical Images -->
+        <img src="assets/heart.png" class="float-img" style="top: 5%; right: 18%; width: 160px; animation-delay: 0s;" alt="">
+        <img src="assets/dna.png" class="float-img" style="bottom: 5%; left: 12%; width: 130px; animation-delay: 3s;" alt="">
+        <img src="assets/brain.png" class="float-img" style="top: 42%; right: 2%; width: 120px; animation-delay: 1.5s;" alt="">
     </div>
 
     <!-- Main Dashboard Layout -->
@@ -141,6 +142,22 @@
                 <h3><i class="fa-solid fa-circle-info"></i> Information</h3>
             </div>
             <div class="sidebar-content">
+
+                <!-- Visual Medical Hero -->
+                <div class="card medical-visual-card">
+                    <div class="visual-switcher">
+                        <img src="assets/heart.png" class="med-visual active" id="vis-heart" alt="Anatomical Heart">
+                        <img src="assets/dna.png" class="med-visual" id="vis-dna" alt="DNA Helix">
+                        <img src="assets/brain.png" class="med-visual" id="vis-brain" alt="Neural Brain">
+                    </div>
+                    <div class="visual-dots">
+                        <span class="vdot active" data-id="vis-heart"></span>
+                        <span class="vdot" data-id="vis-dna"></span>
+                        <span class="vdot" data-id="vis-brain"></span>
+                    </div>
+                    <p class="text-sm" style="text-align:center; margin-top: 8px;">AI-Powered Medical Analysis</p>
+                </div>
+
                 <div class="card status-card">
                     <div class="status-indicator">
                         <i class="fa-solid fa-server"></i>

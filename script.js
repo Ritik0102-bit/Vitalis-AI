@@ -151,6 +151,30 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    /* -------------------------------------
+       MEDICAL VISUAL CAROUSEL
+       ------------------------------------- */
+    const medVisuals = document.querySelectorAll(".med-visual");
+    const vdots = document.querySelectorAll(".vdot");
+    let visIdx = 0;
+
+    function switchVisual(idx) {
+        medVisuals.forEach(v => v.classList.remove("active"));
+        vdots.forEach(d => d.classList.remove("active"));
+        medVisuals[idx].classList.add("active");
+        vdots[idx].classList.add("active");
+        visIdx = idx;
+    }
+
+    // Dot click interaction
+    vdots.forEach((dot, i) => {
+        dot.addEventListener("click", () => switchVisual(i));
+    });
+
+    // Auto-rotate every 3.5 seconds
+    setInterval(() => {
+        switchVisual((visIdx + 1) % medVisuals.length);
+    }, 3500);
 
     /* -------------------------------------
        INITIALIZATION
