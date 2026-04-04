@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 
     try {
         const { symptomsText, base64Image, mimeType } = req.body;
-        
+
         // Retrieve key from Vercel Environment Variables
         const API_KEY = process.env.API_KEY;
 
@@ -18,26 +18,37 @@ export default async function handler(req, res) {
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
 
         // Construct the prompt
-        let promptText = `You are Vitalis, an advanced Medical AI Assistant. 
-The patient is reporting the following query/symptoms: "${symptomsText || "Please analyze the attached image."}"
-
+        let promptText = `**Persona:** You are Vitalis, a highly efficient, empathetic, and professional Medical AI Assistant. Keep your descriptions concise and avoid unnecessary jargon or lengthy paragraphs.
+**Context:** The patient is reporting the following symptoms/query: "${symptomsText || "Please analyze the attached image."}"
 `;
         if (base64Image) {
-            promptText += `An image of a medical report, prescription, or relevant health context is attached. First, extract and summarize the key findings or text from the image. Then, provide your medical insights. `;
+            promptText += `Additional Context: An image of a medical document, prescription, or physical symptom is attached.
+`;
         }
-        
-        promptText += `
-Please provide your response following these rules:
-1. Extract/Analyze Image (if provided)
-2. Potential Condition(s): Give a list of likely conditions based on text and image.
-3. Precautions & Recommendations: Suggest safe home remedies or immediate steps.
-4. Medical Disclaimer.
 
-Use ONLY clean HTML for formatting (<strong>, <ul>, <li>, <br>). No markdown! Make it look like a professional health report.`;
+        promptText += `**Task:** Analyze the provided context. Provide a brief, highly readable, and structured medical assessment.
+
+Please output your response strictly using clean HTML (do not use markdown). Follow this exact structure to ensure it is good-looking and readable:
+
+<div class="vitalis-report">
+    ${base64Image ? "<h4>📋 Image Findings</h4><p><em>Brief summary of extracted text or key findings from the image.</em></p>" : ""}
+    <h4>🩺 Potential Conditions</h4>
+    <ul>
+        <li><strong>[Condition Name]:</strong> Brief 1-2 sentence description.</li>
+    </ul>
+    <h4>🛡️ Actionable Recommendations</h4>
+    <ul>
+        <li>[Clear, brief, and safe actionable step or home remedy]</li>
+    </ul>
+    <br>
+    <div style="background: rgba(255, 77, 79, 0.1); border-left: 4px solid #ff4d4f; padding: 12px; border-radius: 4px; font-size: 0.9em;">
+        <strong>⚠️ Medical Disclaimer:</strong> I am an AI, not a doctor. Please consult a healthcare professional for an accurate diagnosis and treatment.
+    </div>
+</div>`;
 
         // Build Payload Array
         const parts = [{ text: promptText }];
-        
+
         if (base64Image && mimeType) {
             parts.push({
                 inlineData: {
@@ -64,13 +75,13 @@ Use ONLY clean HTML for formatting (<strong>, <ul>, <li>, <br>). No markdown! Ma
         }
 
         const data = await response.json();
-        
+
         // Parse the response
         if (data && data.candidates && data.candidates.length > 0) {
             let aiResponse = data.candidates[0].content.parts[0].text;
             // Clean markdown HTML blocks if the LLM adds them
             aiResponse = aiResponse.replace(/```html/gi, "").replace(/```/gi, "").trim();
-            
+
             // Return back to the client-side frontend
             return res.status(200).json({ reply: aiResponse });
         } else {
