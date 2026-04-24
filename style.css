@@ -1196,7 +1196,10 @@ body.light-theme .preview-text { color: var(--neon-purple); }
     font-size: 0.85rem;
     font-family: var(--font-body);
     cursor: pointer;
-    white-space: nowrap;
+    white-space: normal;
+    text-align: left;
+    flex-shrink: 0;
+    max-width: 85%;
     transition: all 0.25s var(--transition-smooth);
     position: relative;
     overflow: hidden;
