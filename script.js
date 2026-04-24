@@ -200,35 +200,84 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function addMessage(text, sender, isHTML = false, imageSrc = null) {
-        if (emptyState && emptyState.style.display !== "none") {
-            emptyState.style.opacity = "0";
-            setTimeout(() => emptyState.style.display = "none", 400);
-        }
-
-        const msgDiv = document.createElement("div");
-        msgDiv.classList.add("message");
-        msgDiv.classList.add(sender === "user" ? "user-msg" : "bot-msg");
-
-        let content = "";
-        if (imageSrc) {
-            content += `<img src="${imageSrc}" class="user-img-attachment">`;
-        }
-
-        let parsedText = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-
-        if (isHTML || sender === "bot") {
-            msgDiv.innerHTML = content + parsedText;
-        } else {
-            if (imageSrc) {
-                msgDiv.innerHTML = content;
-                msgDiv.appendChild(document.createTextNode(text));
-            } else {
-                msgDiv.textContent = text;
+        return new Promise((resolve) => {
+            if (emptyState && emptyState.style.display !== "none") {
+                emptyState.style.opacity = "0";
+                setTimeout(() => emptyState.style.display = "none", 400);
             }
-        }
 
-        chatMessages.appendChild(msgDiv);
-        scrollToBottom();
+            const msgDiv = document.createElement("div");
+            msgDiv.classList.add("message");
+            msgDiv.classList.add(sender === "user" ? "user-msg" : "bot-msg");
+
+            let content = "";
+            if (imageSrc) {
+                content += `<img src="${imageSrc}" class="user-img-attachment">`;
+            }
+
+            let parsedText = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+            if (sender === "bot") {
+                chatMessages.appendChild(msgDiv);
+                scrollToBottom();
+                
+                const tokens = parsedText.match(/(<[^>]+>)|([^<]+)/g) || [];
+                let currentHTML = content;
+                let tokenIndex = 0;
+                let wordIndex = 0;
+                let words = [];
+                
+                function type() {
+                    if (tokenIndex >= tokens.length) {
+                        scrollToBottom();
+                        resolve();
+                        return;
+                    }
+                    const token = tokens[tokenIndex];
+                    if (token.startsWith('<')) {
+                        currentHTML += token;
+                        tokenIndex++;
+                        type();
+                        return;
+                    }
+                    if (wordIndex === 0) {
+                         words = token.match(/\S+\s*/g) || [];
+                         if (words.length === 0 && token.trim() === '') {
+                             currentHTML += token;
+                             tokenIndex++;
+                             type();
+                             return;
+                         }
+                    }
+                    if (wordIndex < words.length) {
+                        currentHTML += words[wordIndex];
+                        msgDiv.innerHTML = currentHTML;
+                        scrollToBottom();
+                        wordIndex++;
+                        setTimeout(type, 35);
+                    } else {
+                        tokenIndex++;
+                        wordIndex = 0;
+                        type();
+                    }
+                }
+                type();
+            } else {
+                if (isHTML) {
+                    msgDiv.innerHTML = content + parsedText;
+                } else {
+                    if (imageSrc) {
+                        msgDiv.innerHTML = content;
+                        msgDiv.appendChild(document.createTextNode(text));
+                    } else {
+                        msgDiv.textContent = text;
+                    }
+                }
+                chatMessages.appendChild(msgDiv);
+                scrollToBottom();
+                resolve();
+            }
+        });
     }
 
     function addTypingIndicator() {
@@ -396,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
         responseHTML = responseHTML.replace(chipRegex, "").trim();
 
         removeTypingIndicator();
-        addMessage(responseHTML, "bot", true);
+        await addMessage(responseHTML, "bot", true);
         renderChips(chips);
 
         userInput.disabled = false;
