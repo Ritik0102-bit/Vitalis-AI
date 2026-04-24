@@ -2,53 +2,77 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vitalis AI - Health Assistant</title>
     <meta name="description" content="AI Symptom Checker - A modern health assistant to analyze symptoms and reports.">
-    
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Floating Background Medical Images -->
-    <div class="floating-bg">
-        <!-- Floating FontAwesome icons (subtle) -->
-        <i class="fa-solid fa-notes-medical float-item" style="top: 15%; left: 10%; animation-delay: 0s;"></i>
-        <i class="fa-solid fa-pills float-item" style="top: 70%; left: 85%; animation-delay: 2s; font-size: 3rem;"></i>
-        <i class="fa-solid fa-stethoscope float-item" style="top: 50%; left: 5%; animation-delay: 5s;"></i>
-        <i class="fa-solid fa-truck-medical float-item" style="top: 85%; left: 60%; animation-delay: 2.5s;"></i>
-        <!-- Floating Medical Images -->
-        <img src="assets/heart.png" class="float-img" style="top: 5%; right: 18%; width: 160px; animation-delay: 0s;" alt="">
-        <img src="assets/dna.png" class="float-img" style="bottom: 5%; left: 12%; width: 130px; animation-delay: 3s;" alt="">
-        <img src="assets/brain.png" class="float-img" style="top: 42%; right: 2%; width: 120px; animation-delay: 1.5s;" alt="">
+
+    <div class="bg-canvas">
+        <div class="cellular-pattern"></div>
+        <div class="bg-mesh"></div>
+        <div class="grid-lines"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="vignette"></div>
     </div>
 
-    <!-- Main Dashboard Layout -->
+    <div class="floating-bg">
+        <div class="hud-ring hud-ring-1"></div>
+        <div class="hud-ring hud-ring-2"></div>
+        <div class="hud-ring hud-ring-3"></div>
+
+        <i class="fa-solid fa-notes-medical float-item" style="top: 15%; left: 10%; animation-delay: 0s;"></i>
+        <i class="fa-solid fa-pills float-item" style="top: 70%; left: 85%; animation-delay: 2s; font-size: 3rem;"></i>
+        <i class="fa-solid fa-dna float-item" style="top: 40%; left: 85%; animation-delay: 4s; font-size: 5rem;"></i>
+        <i class="fa-solid fa-stethoscope float-item" style="top: 50%; left: 5%; animation-delay: 5s;"></i>
+        <i class="fa-solid fa-truck-medical float-item" style="top: 85%; left: 60%; animation-delay: 2.5s;"></i>
+    </div>
+
     <div class="app-wrapper">
-        
-        <!-- Mobile Overlay -->
+
         <div class="mobile-overlay" id="mobile-overlay"></div>
 
-        <!-- Left Sidebar -->
         <aside class="sidebar left-sidebar" id="left-sidebar">
             <div class="sidebar-header">
                 <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
-                <button class="close-sidebar-btn d-mobile-only"><i class="fa-solid fa-xmark"></i></button>
+                <button class="close-sidebar-btn" id="close-sidebar-btn" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="sidebar-content">
+
+                <div class="card">
+                    <h4><i class="fa-solid fa-user-doctor"></i> Recent Vitals</h4>
+                    <p class="text-sm" style="margin-bottom: 12px;">Last synced: Today, 08:30 AM</p>
+                    <div class="bio-stat">
+                        <span class="bio-stat-label"><i class="fa-solid fa-droplet"></i> Blood Pressure</span>
+                        <span class="bio-stat-value">120/80</span>
+                    </div>
+                    <div class="bio-stat">
+                        <span class="bio-stat-label"><i class="fa-solid fa-lungs"></i> Blood Oxygen</span>
+                        <span class="bio-stat-value">98%</span>
+                    </div>
+                    <div class="bio-stat">
+                        <span class="bio-stat-label"><i class="fa-solid fa-temperature-half"></i> Body Temp</span>
+                        <span class="bio-stat-value">98.6°F</span>
+                    </div>
+                </div>
+
                 <div class="card prompt-list-wrap">
                     <h4>Direct Prompts</h4>
                     <p class="text-sm mock-text">Click to instantly consult the AI.</p>
                     <button class="quick-prompt-btn" data-text="I am experiencing a severe headache and fever.">
-                        <i class="fa-solid fa-head-side-virus"></i> Headache & Fever
+                        <i class="fa-solid fa-head-side-virus"></i> Headache &amp; Fever
                     </button>
                     <button class="quick-prompt-btn" data-text="I have an upset stomach and feel nauseous.">
                         <i class="fa-solid fa-virus"></i> Stomach Issues
                     </button>
                     <button class="quick-prompt-btn" data-text="I have a sore throat, runny nose, and a persistent cough.">
-                        <i class="fa-solid fa-lungs-virus"></i> Cold & Cough
+                        <i class="fa-solid fa-lungs-virus"></i> Cold &amp; Cough
                     </button>
                     <button class="quick-prompt-btn" data-text="I have pain and aching in my joints and muscles.">
                         <i class="fa-solid fa-bone"></i> Joint / Muscle Pain
@@ -56,7 +80,6 @@
                     <button class="quick-prompt-btn" data-text="I have developed a skin rash that is red and itchy.">
                         <i class="fa-solid fa-hand-dots"></i> Skin Rash / Allergy
                     </button>
-
                 </div>
                 <div class="card emergency-card">
                     <h4><i class="fa-solid fa-phone-volume"></i> Emergency</h4>
@@ -65,15 +88,13 @@
             </div>
         </aside>
 
-        <!-- Center Main Column -->
         <main class="chat-container">
             <div class="chat-header">
                 <div class="header-info">
-                    <!-- Hamburger Menu for Mobile -->
-                    <button id="mobile-menu-btn" class="icon-btn d-mobile-only" title="Menu"><i class="fa-solid fa-bars"></i></button>
-                    
                     <div class="avatar-glow">
-                        <div class="avatar"><i class="fa-solid fa-heart-pulse"></i></div>
+                        <div class="avatar">
+                            <i class="fa-solid fa-heart-pulse" id="sidebar-toggle"></i>
+                        </div>
                     </div>
                     <div>
                         <h2>Vitalis AI</h2>
@@ -96,7 +117,11 @@
             </div>
 
             <div class="chat-messages" id="chat-messages">
-                <!-- Messages will be injected here -->
+                <div class="empty-state" id="empty-state">
+                    <i class="fa-solid fa-dna"></i>
+                    <h3>How can Vitalis help you today?</h3>
+                    <p>Describe your symptoms, upload a lab report, or use the body map to isolate areas of discomfort. I am ready to analyze.</p>
+                </div>
             </div>
 
             <div class="preview-container" id="preview-container" style="display: none;">
@@ -108,82 +133,57 @@
             </div>
 
             <div id="suggestion-chips" class="suggestion-chips"></div>
-            
+
             <div class="chat-input-container">
                 <input type="file" id="file-input" accept="image/png, image/jpeg, image/webp" style="display: none;">
-                
-                <button id="upload-btn" class="action-btn" title="Upload Report/Prescription">
-                    <i class="fa-solid fa-paperclip"></i>
-                </button>
-                
-                <button id="body-map-btn" class="action-btn" title="Interactive Body Map">
-                    <i class="fa-solid fa-child"></i>
-                </button>
-
-                <button id="pain-btn" class="action-btn" title="Visual Pain Scale">
-                    <i class="fa-solid fa-temperature-half"></i>
-                </button>
-
-                <button id="mic-btn" class="action-btn" title="Voice Input">
-                    <i class="fa-solid fa-microphone"></i>
-                </button>
-
+                <button id="upload-btn" class="action-btn" title="Upload Report/Prescription"><i class="fa-solid fa-paperclip"></i></button>
+                <button id="body-map-btn" class="action-btn" title="Interactive Body Map"><i class="fa-solid fa-child"></i></button>
+                <button id="pain-btn" class="action-btn" title="Visual Pain Scale"><i class="fa-solid fa-temperature-half"></i></button>
+                <button id="mic-btn" class="action-btn" title="Voice Input"><i class="fa-solid fa-microphone"></i></button>
                 <input type="text" id="user-input" placeholder="Type or describe your symptoms..." autocomplete="off">
-                
-                <button id="send-btn" class="send-btn" title="Send Message">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
+                <button id="send-btn" class="send-btn" title="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </main>
 
-        <!-- Right Sidebar -->
         <aside class="sidebar right-sidebar" id="right-sidebar">
             <div class="sidebar-header">
                 <h3><i class="fa-solid fa-circle-info"></i> Information</h3>
             </div>
             <div class="sidebar-content">
 
-                <!-- Visual Medical Hero -->
-                <div class="card medical-visual-card">
-                    <div class="visual-switcher">
-                        <img src="assets/heart.png" class="med-visual active" id="vis-heart" alt="Anatomical Heart">
-                        <img src="assets/dna.png" class="med-visual" id="vis-dna" alt="DNA Helix">
-                        <img src="assets/brain.png" class="med-visual" id="vis-brain" alt="Neural Brain">
+                <div class="card" style="border-color: rgba(34, 211, 238, 0.3);">
+                    <h4><i class="fa-solid fa-heart-crack" style="color: var(--neon-cyan);"></i> Live Monitoring</h4>
+                    <p class="text-sm">Resting Heart Rate: <strong class="stat-value" style="font-size: 1.1rem; margin-left: 5px;">72 BPM</strong></p>
+                    <div class="ekg-monitor">
+                        <svg viewBox="0 0 500 100" class="ekg-line" preserveAspectRatio="none">
+                            <polyline points="0,50 50,50 70,20 90,80 110,10 130,90 150,50 200,50 220,30 240,70 260,50 350,50 370,10 390,90 410,20 430,80 450,50 500,50" style="fill:none;stroke-width:3" />
+                        </svg>
                     </div>
-                    <div class="visual-dots">
-                        <span class="vdot active" data-id="vis-heart"></span>
-                        <span class="vdot" data-id="vis-dna"></span>
-                        <span class="vdot" data-id="vis-brain"></span>
-                    </div>
-                    <p class="text-sm" style="text-align:center; margin-top: 8px;">AI-Powered Medical Analysis</p>
                 </div>
 
                 <div class="card status-card">
                     <div class="status-indicator">
-                        <i class="fa-solid fa-server"></i>
-                        <span>AI Engine: <strong>Gemini 2.5 Flash</strong></span>
+                        <i class="fa-solid fa-server" style="color: var(--stat-icon-color); margin-right: 8px;"></i>
+                        <span style="font-family: var(--font-body); font-size: 0.9rem;">AI Engine: <strong style="font-family: var(--font-heading); color: var(--stat-value-color);">Gemini 2.5 Flash</strong></span>
                     </div>
-                    <div class="status-indicator">
-                        <i class="fa-solid fa-shield-cat"></i>
-                        <span>Secure Mode: <strong>Active</strong></span>
+                    <div class="status-indicator" style="margin-top: 10px;">
+                        <i class="fa-solid fa-shield-cat" style="color: var(--stat-icon-color); margin-right: 8px;"></i>
+                        <span style="font-family: var(--font-body); font-size: 0.9rem;">Secure Mode: <strong style="font-family: var(--font-heading); color: var(--stat-value-color);">Active</strong></span>
                     </div>
                 </div>
-
                 <div class="card">
-                    <h4>🩺 Daily Tip</h4>
+                    <h4><i class="fa-solid fa-notes-medical" style="margin-right: 8px; color: var(--stat-icon-color);"></i> Daily Tip</h4>
                     <p class="text-sm mock-text">Stay hydrated! Drinking 8 glasses of water a day maintains energy levels and brain function.</p>
                 </div>
-
                 <div class="card disclaimer-card">
-                    <h4>⚠️ Disclaimer</h4>
+                    <h4><i class="fa-solid fa-triangle-exclamation" style="margin-right: 8px;"></i> Disclaimer</h4>
                     <p class="text-sm mock-text">Vitalis is an AI built for educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment.</p>
                 </div>
             </div>
         </aside>
 
     </div>
-    
-    <!-- Body Map Modal -->
+
     <div id="body-map-modal" class="modal-overlay">
         <div class="modal-content text-center">
             <h3><i class="fa-solid fa-child"></i> Symptom Region Selector</h3>
@@ -191,19 +191,12 @@
             <div class="body-map-wrap">
                 <svg viewBox="0 0 100 200" class="human-body-svg">
                     <circle cx="50" cy="20" r="14" data-part="Head" class="body-part" />
-                    <!-- Neck -->
                     <rect x="43" y="32" width="14" height="15" rx="3" data-part="Neck" class="body-part" />
-                    <!-- Chest -->
                     <path d="M 30 46 Q 50 40 70 46 L 66 85 Q 50 95 34 85 Z" data-part="Chest" class="body-part" />
-                    <!-- Stomach -->
                     <path d="M 34 85 Q 50 95 66 85 L 63 115 Q 50 120 37 115 Z" data-part="Stomach" class="body-part" />
-                    <!-- Left Arm -->
                     <path d="M 30 46 Q 15 55 12 90 L 22 92 Q 25 70 34 80 Z" data-part="Left Arm" class="body-part" />
-                    <!-- Right Arm -->
                     <path d="M 70 46 Q 85 55 88 90 L 78 92 Q 75 70 66 80 Z" data-part="Right Arm" class="body-part" />
-                    <!-- Left Leg -->
                     <rect x="37" y="115" width="10" height="70" rx="4" data-part="Left Leg" class="body-part" />
-                    <!-- Right Leg -->
                     <rect x="53" y="115" width="10" height="70" rx="4" data-part="Right Leg" class="body-part" />
                 </svg>
             </div>
@@ -211,7 +204,6 @@
         </div>
     </div>
 
-    <!-- Pain Slider Modal -->
     <div id="pain-slider-modal" class="modal-overlay">
         <div class="modal-content text-center">
             <h3><i class="fa-solid fa-temperature-half"></i> Pain Intensity</h3>
@@ -220,7 +212,7 @@
                 <div class="pain-face" id="pain-face-indicator">🙂</div>
                 <div class="pain-value" id="pain-value-text">Level 1 (Mild)</div>
                 <input type="range" id="pain-slider" min="1" max="10" value="1">
-                <div class="pain-scale-labels" style="display:flex; justify-content:space-between; width:100%; font-size:0.8rem; margin-bottom: 20px;">
+                <div class="pain-scale-labels">
                     <span>Mild</span>
                     <span>Severe</span>
                 </div>
@@ -229,7 +221,6 @@
         </div>
     </div>
 
-    <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
     <script src="script.js"></script>

@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    /* DOM Elements setup */
     const chatMessages = document.getElementById("chat-messages");
     const userInput = document.getElementById("user-input");
     const sendBtn = document.getElementById("send-btn");
@@ -13,15 +12,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const toast = document.getElementById("toast");
     const themeToggleBtn = document.getElementById("theme-toggle");
     const downloadPdfBtn = document.getElementById("download-pdf");
+    const emptyState = document.getElementById("empty-state");
 
-    // Sidebars & Mobile Elements
-    const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+    // FIX 3: Heart icon as sidebar toggle
+    const sidebarToggle = document.getElementById("sidebar-toggle");
     const leftSidebar = document.getElementById("left-sidebar");
     const mobileOverlay = document.getElementById("mobile-overlay");
-    const closeSidebarBtn = document.querySelector(".close-sidebar-btn");
+    const closeSidebarBtn = document.getElementById("close-sidebar-btn");
     const quickPromptBtns = document.querySelectorAll(".quick-prompt-btn");
 
-    // Modal & Interactive Elements
     const bodyMapBtn = document.getElementById("body-map-btn");
     const bodyMapModal = document.getElementById("body-map-modal");
     const painBtn = document.getElementById("pain-btn");
@@ -29,59 +28,71 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeBtns = document.querySelectorAll(".close-modal-btn");
     const bodyParts = document.querySelectorAll(".body-part");
 
-    // Pain Slider Elements
     const painSlider = document.getElementById("pain-slider");
     const painFace = document.getElementById("pain-face-indicator");
     const painValueText = document.getElementById("pain-value-text");
     const submitPainBtn = document.getElementById("submit-pain-btn");
 
-    // Chips Container
     const suggestionChips = document.getElementById("suggestion-chips");
-
-    // API key has been moved securely to Vercel Serverless Backend
 
     let currentBase64Image = null;
     let currentMimeType = null;
     let isLightMode = false;
+    let sidebarOpen = false;
 
-    // Toast Notification helper
+    const apiKey = "";
+
     function showToast(message) {
         toast.textContent = message;
         toast.classList.add("show");
         setTimeout(() => toast.classList.remove("show"), 3000);
     }
 
-    /* -------------------------------------
-       MOBILE NAVIGATION LOGIC
-       ------------------------------------- */
-    function toggleSidebar() {
-        leftSidebar.classList.toggle("active");
-        mobileOverlay.classList.toggle("active");
+    // FIX 4: Sidebar toggle — only on mobile/tablet
+    function openSidebar() {
+        if (window.innerWidth > 1100) return;
+        leftSidebar.classList.add("active");
+        mobileOverlay.classList.add("active");
+        closeSidebarBtn.style.display = "flex";
+        sidebarOpen = true;
     }
 
-    if (mobileMenuBtn) mobileMenuBtn.addEventListener("click", toggleSidebar);
-    if (closeSidebarBtn) closeSidebarBtn.addEventListener("click", toggleSidebar);
-    if (mobileOverlay) mobileOverlay.addEventListener("click", toggleSidebar);
+    function closeSidebar() {
+        leftSidebar.classList.remove("active");
+        mobileOverlay.classList.remove("active");
+        closeSidebarBtn.style.display = "none";
+        sidebarOpen = false;
+    }
 
+    function toggleSidebar() {
+        if (sidebarOpen) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    }
 
-    /* -------------------------------------
-       QUICK PROMPTS INJECTION LOGIC
-       ------------------------------------- */
+    // FIX 3: Heart icon triggers sidebar on mobile
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleSidebar();
+        });
+    }
+
+    if (closeSidebarBtn) closeSidebarBtn.addEventListener("click", closeSidebar);
+    if (mobileOverlay) mobileOverlay.addEventListener("click", closeSidebar);
+
     quickPromptBtns.forEach(btn => {
         btn.addEventListener("click", () => {
             const presetText = btn.getAttribute("data-text");
             if (!presetText) return;
-            // If on mobile, close sidebar after clicking
-            if(window.innerWidth <= 1024) { toggleSidebar(); }
-            // Auto inject and send
+            if (window.innerWidth <= 1100) closeSidebar();
             userInput.value = presetText;
             handleSend();
         });
     });
 
-    /* -------------------------------------
-       MODALS, MAPS & SLIDER LOGIC
-       ------------------------------------- */
     function openModal(modal) { if(modal) modal.classList.add("active"); }
     function closeModal(modal) { if(modal) modal.classList.remove("active"); }
 
@@ -126,9 +137,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    /* -------------------------------------
-       SUGGESTION CHIPS LOGIC
-       ------------------------------------- */
     function renderChips(chips) {
         if (!suggestionChips) return;
         suggestionChips.innerHTML = "";
@@ -137,7 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         suggestionChips.style.display = "flex";
-        
         chips.forEach(chipText => {
             const btn = document.createElement("button");
             btn.className = "chip-btn";
@@ -151,46 +158,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    /* -------------------------------------
-       MEDICAL VISUAL CAROUSEL
-       ------------------------------------- */
-    const medVisuals = document.querySelectorAll(".med-visual");
-    const vdots = document.querySelectorAll(".vdot");
-    let visIdx = 0;
-
-    function switchVisual(idx) {
-        medVisuals.forEach(v => v.classList.remove("active"));
-        vdots.forEach(d => d.classList.remove("active"));
-        medVisuals[idx].classList.add("active");
-        vdots[idx].classList.add("active");
-        visIdx = idx;
-    }
-
-    // Dot click interaction
-    vdots.forEach((dot, i) => {
-        dot.addEventListener("click", () => switchVisual(i));
-    });
-
-    // Auto-rotate every 3.5 seconds
-    setInterval(() => {
-        switchVisual((visIdx + 1) % medVisuals.length);
-    }, 3500);
-
-    /* -------------------------------------
-       INITIALIZATION
-       ------------------------------------- */
-    setTimeout(() => {
-        addTypingIndicator();
-        setTimeout(() => {
-            removeTypingIndicator();
-            addMessage("Systems initialized. 🧬 I am **Vitalis**, your advanced health AI. You can type your symptoms, use your microphone to speak, or upload a medical report for me to analyze.", "bot");
-        }, 1200);
-    }, 500);
-
-    /* -------------------------------------
-       THEME TOGGLE LOGIC
-       ------------------------------------- */
+    // FIX 1: Instant theme toggle — no lag
     themeToggleBtn.addEventListener("click", () => {
+        // Add no-transition class to suppress all transitions instantly
+        document.body.classList.add("no-transition");
+
         isLightMode = !isLightMode;
         if (isLightMode) {
             document.body.classList.add("light-theme");
@@ -199,27 +171,28 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.remove("light-theme");
             themeToggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
         }
+
+        // Remove no-transition after a single frame so future animations work
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                document.body.classList.remove("no-transition");
+            });
+        });
     });
 
-    /* -------------------------------------
-       PDF DOWNLOAD LOGIC (html2pdf)
-       ------------------------------------- */
     downloadPdfBtn.addEventListener("click", () => {
-        if (chatMessages.children.length === 0) {
+        if (chatMessages.children.length === 0 || (chatMessages.children.length === 1 && emptyState)) {
             showToast("The session is empty. Nothing to download!");
             return;
         }
-        
         showToast("Generating PDF... Please wait.");
-        
         const opt = {
-            margin:       10,
-            filename:     'Vitalis-AI-Diagnoses-Session.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true, logging: false },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            margin: 10,
+            filename: 'Vitalis-AI-Diagnoses-Session.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-        
         html2pdf().set(opt).from(chatMessages).save().then(() => {
             showToast("PDF downloaded successfully!");
         }).catch((err) => {
@@ -228,19 +201,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    /* -------------------------------------
-       UI MESSAGE HELPER
-       ------------------------------------- */
     function addMessage(text, sender, isHTML = false, imageSrc = null) {
+        if (emptyState && emptyState.style.display !== "none") {
+            emptyState.style.opacity = "0";
+            setTimeout(() => emptyState.style.display = "none", 400);
+        }
+
         const msgDiv = document.createElement("div");
         msgDiv.classList.add("message");
         msgDiv.classList.add(sender === "user" ? "user-msg" : "bot-msg");
-        
+
         let content = "";
         if (imageSrc) {
             content += `<img src="${imageSrc}" class="user-img-attachment">`;
         }
-        
+
         let parsedText = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
 
         if (isHTML || sender === "bot") {
@@ -253,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 msgDiv.textContent = text;
             }
         }
-        
+
         chatMessages.appendChild(msgDiv);
         scrollToBottom();
     }
@@ -262,12 +237,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const indicatorDiv = document.createElement("div");
         indicatorDiv.classList.add("message", "bot-msg", "typing-indicator");
         indicatorDiv.id = "typing";
-        
-        for (let i = 0; i < 3; i++) {
-            const dot = document.createElement("div");
-            dot.classList.add("typing-dot");
-            indicatorDiv.appendChild(dot);
+
+        const loaderContainer = document.createElement("div");
+        loaderContainer.classList.add("dna-loader");
+
+        for (let i = 0; i < 4; i++) {
+            const span = document.createElement("span");
+            loaderContainer.appendChild(span);
         }
+
+        indicatorDiv.appendChild(loaderContainer);
         chatMessages.appendChild(indicatorDiv);
         scrollToBottom();
     }
@@ -281,12 +260,9 @@ document.addEventListener("DOMContentLoaded", () => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    /* -------------------------------------
-       VOICE RECOGNITION (Web Speech API)
-       ------------------------------------- */
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition;
-    
+
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
         recognition.continuous = false;
@@ -323,22 +299,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    /* -------------------------------------
-       FILE UPLOAD & PREVIEW LOGIC
-       ------------------------------------- */
-    uploadBtn.addEventListener("click", () => {
-        fileInput.click();
-    });
+    uploadBtn.addEventListener("click", () => { fileInput.click(); });
 
     fileInput.addEventListener("change", (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        
         if (!file.type.startsWith('image/')) {
             showToast("Please upload an image file (PNG, JPG, WEBP).");
             return;
         }
-
         const reader = new FileReader();
         reader.onload = (event) => {
             currentBase64Image = event.target.result;
@@ -356,72 +325,86 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.value = "";
     });
 
-    /* -------------------------------------
-       BACKEND SECURE PROXY INTEGRATION 
-       ------------------------------------- */
-    async function fetchAiDiagnosis(symptomsText, base64Image, mimeType) {
-        const apiUrl = "/api/chat";
+    async function fetchAiDiagnosisWithRetry(payload, retries = 5) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+        const delays = [1000, 2000, 4000, 8000, 16000];
 
-        // If an image is provided, strip the base64 URI prefix to send pure data
-        let b64Data = null;
-        if (base64Image && mimeType) {
-            b64Data = base64Image.split(',')[1];
+        for (let i = 0; i < retries; i++) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                if (i === retries - 1) throw error;
+                await new Promise(res => setTimeout(res, delays[i]));
+            }
         }
-        
-        const selectedLanguage = document.getElementById("language-select") ? document.getElementById("language-select").value : "English";
+    }
 
+    async function fetchAiDiagnosis(symptomsText, base64Image, mimeType) {
         try {
-            const response = await fetch(apiUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    symptomsText: symptomsText,
-                    base64Image: b64Data,
-                    mimeType: mimeType,
-                    language: selectedLanguage
-                })
-            });
+            const selectedLanguage = document.getElementById("language-select") ? document.getElementById("language-select").value : "English";
 
-            if (!response.ok) {
-                const errData = await response.json();
-                console.error("API proxy error:", errData);
-                return "<span style='color: #ef4444;'>Connection Error. The AI brain is currently unreachable.</span>";
+            const parts = [];
+            const promptText = `User Language: ${selectedLanguage}\nUser Input: ${symptomsText || "Please analyze the attached image."}`;
+            parts.push({ text: promptText });
+
+            if (base64Image && mimeType) {
+                const rawBase64 = base64Image.split(',')[1];
+                parts.push({
+                    inlineData: {
+                        mimeType: mimeType,
+                        data: rawBase64
+                    }
+                });
             }
 
-            const data = await response.json();
-            
-            if (data && data.reply) {
-                return data.reply;
+            const payload = {
+                contents: [{ role: "user", parts: parts }],
+                systemInstruction: {
+                    parts: [{
+                        text: "You are Vitalis AI, a highly advanced, empathetic, and professional health assistant. Analyze the user's symptoms or medical reports (if an image is provided). Provide a well-structured response using semantic HTML formatting (e.g., <br>, <strong>, <ul>, <li>, <h3>, <h4>). Do NOT use markdown (**). Start with a brief, empathetic acknowledgment. Group your analysis into clear sections like <h3>Possible Causes</h3>, <h3>Recommended Actions</h3>, and <h3>When to Seek Immediate Care</h3>. IMPORTANT: Always include a polite disclaimer that you are an AI and this is not professional medical advice. Finally, suggest 2 to 3 short, relevant follow-up actions or questions for the user as chips at the very end of your response. Format each chip exactly like this: [CHIP: Suggestion 1] [CHIP: Suggestion 2]."
+                    }]
+                }
+            };
+
+            const data = await fetchAiDiagnosisWithRetry(payload);
+            const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (replyText) {
+                return replyText;
             } else {
                 return "I'm sorry, I couldn't formulate a diagnosis framework.";
             }
 
         } catch (error) {
-            console.error("Error making API request to backend:", error);
-            return "<span style='color: #ef4444;'>Network error: Unable to reach the server backend.</span>";
+            console.error("Error making API request:", error);
+            return "<span style='color: #F87171;'><i class='fa-solid fa-triangle-exclamation'></i> Connection Error. The AI brain is currently unreachable. Please verify your connection or API configuration.</span>";
         }
     }
 
-    /* -------------------------------------
-       MESSAGE SEND LOGIC
-       ------------------------------------- */
     async function handleSend() {
         const text = userInput.value.trim();
         const hasImage = currentBase64Image !== null;
-        
         if (text === "" && !hasImage) return;
 
         const imageToDisplay = currentBase64Image;
         const attachedMimeType = currentMimeType;
 
         addMessage(text, "user", false, imageToDisplay);
-        
+
         userInput.value = "";
         previewContainer.style.display = "none";
         currentBase64Image = null;
         currentMimeType = null;
         fileInput.value = "";
-        
+
         userInput.disabled = true;
         sendBtn.disabled = true;
         uploadBtn.disabled = true;
@@ -430,16 +413,14 @@ document.addEventListener("DOMContentLoaded", () => {
         addTypingIndicator();
 
         let responseHTML = await fetchAiDiagnosis(text, imageToDisplay, attachedMimeType);
-        
-        // Extract chips from the response using Regex
+
         const chipRegex = /\[CHIP:\s*(.*?)\]/g;
         let match;
         let chips = [];
         while ((match = chipRegex.exec(responseHTML)) !== null) {
             chips.push(match[1]);
         }
-        
-        // Clean out the logic chips from the visible HTML
+
         responseHTML = responseHTML.replace(chipRegex, "").trim();
 
         removeTypingIndicator();
@@ -454,7 +435,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     sendBtn.addEventListener("click", handleSend);
-    
+
     userInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter" && !userInput.disabled) {
             handleSend();
@@ -468,11 +449,15 @@ document.addEventListener("DOMContentLoaded", () => {
             msg.style.opacity = "0";
             msg.style.transition = "all 0.3s ease";
         });
-        
         setTimeout(() => {
             chatMessages.innerHTML = "";
+            if(emptyState) {
+                chatMessages.appendChild(emptyState);
+                emptyState.style.display = "flex";
+                setTimeout(() => { emptyState.style.opacity = "1"; }, 50);
+            }
             setTimeout(() => {
-                addMessage("Session reset. Vitalis is ready.", "bot");
+                showToast("Session reset successfully.");
             }, 300);
         }, 300);
     });
