@@ -40,8 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let isLightMode = false;
     let sidebarOpen = false;
 
-    const apiKey = "";
-
     function showToast(message) {
         toast.textContent = message;
         toast.classList.add("show");
@@ -325,60 +323,34 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.value = "";
     });
 
-    async function fetchAiDiagnosisWithRetry(payload, retries = 5) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-        const delays = [1000, 2000, 4000, 8000, 16000];
-
-        for (let i = 0; i < retries; i++) {
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return await response.json();
-            } catch (error) {
-                if (i === retries - 1) throw error;
-                await new Promise(res => setTimeout(res, delays[i]));
-            }
-        }
-    }
-
     async function fetchAiDiagnosis(symptomsText, base64Image, mimeType) {
         try {
             const selectedLanguage = document.getElementById("language-select") ? document.getElementById("language-select").value : "English";
 
-            const parts = [];
-            const promptText = `User Language: ${selectedLanguage}\nUser Input: ${symptomsText || "Please analyze the attached image."}`;
-            parts.push({ text: promptText });
-
-            if (base64Image && mimeType) {
-                const rawBase64 = base64Image.split(',')[1];
-                parts.push({
-                    inlineData: {
-                        mimeType: mimeType,
-                        data: rawBase64
-                    }
-                });
-            }
-
             const payload = {
-                contents: [{ role: "user", parts: parts }],
-                systemInstruction: {
-                    parts: [{
-                        text: "You are Vitalis AI, a highly advanced, empathetic, and professional health assistant. Analyze the user's symptoms or medical reports (if an image is provided). Provide a well-structured response using semantic HTML formatting (e.g., <br>, <strong>, <ul>, <li>, <h3>, <h4>). Do NOT use markdown (**). Start with a brief, empathetic acknowledgment. Group your analysis into clear sections like <h3>Possible Causes</h3>, <h3>Recommended Actions</h3>, and <h3>When to Seek Immediate Care</h3>. IMPORTANT: Always include a polite disclaimer that you are an AI and this is not professional medical advice. Finally, suggest 2 to 3 short, relevant follow-up actions or questions for the user as chips at the very end of your response. Format each chip exactly like this: [CHIP: Suggestion 1] [CHIP: Suggestion 2]."
-                    }]
-                }
+                symptomsText: symptomsText,
+                language: selectedLanguage
             };
 
-            const data = await fetchAiDiagnosisWithRetry(payload);
-            const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (base64Image && mimeType) {
+                payload.base64Image = base64Image.split(',')[1];
+                payload.mimeType = mimeType;
+            }
 
-            if (replyText) {
-                return replyText;
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.reply) {
+                return data.reply;
             } else {
                 return "I'm sorry, I couldn't formulate a diagnosis framework.";
             }
