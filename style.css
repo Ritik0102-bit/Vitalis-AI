@@ -379,6 +379,9 @@ body.light-theme .mobile-overlay { background: rgba(255,255,255,0.4); }
    ========================================================================= */
 .sidebar {
     width: 320px;
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
     background: var(--panel-bg);
     backdrop-filter: var(--blur-glass);
     -webkit-backdrop-filter: var(--blur-glass);
@@ -439,6 +442,7 @@ body.light-theme .sidebar-header h3 { color: var(--neon-cyan); }
     flex-direction: column;
     gap: 18px;
     flex: 1;
+    min-height: 0;
     position: relative;
     z-index: 2;
 }
@@ -458,6 +462,7 @@ body.light-theme .sidebar-header h3 { color: var(--neon-cyan); }
     transition: transform 0.3s var(--transition-spring), box-shadow 0.3s ease, border-color 0.3s ease, background 0.25s ease;
     position: relative;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 body.light-theme .card {
