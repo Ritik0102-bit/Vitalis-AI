@@ -5,10 +5,11 @@
   
   **An intelligent, futuristic healthcare assistant powered by advanced AI**
   
-  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-  [![Vercel Deployment](https://img.shields.io/badge/Deployed%20on-Vercel-black?logo=vercel)](https://chat-vitalis-ai.vercel.app/)
-  [![GitHub stars](https://img.shields.io/github/stars/Ritik0102-bit/Vitalis-AI?style=social)](https://github.com/Ritik0102-bit/Vitalis-AI/stargazers)
-  [![AI Engine](https://img.shields.io/badge/AI_Engine-Gemini_2.5_Flash-purple)](https://deepmind.google/technologies/gemini/)
+  [![Vercel Deployment](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://chat-vitalis-ai.vercel.app/)
+  [![AI Engine](https://img.shields.io/badge/AI_Engine-Gemini_2.5_Flash-purple?style=for-the-badge)](https://deepmind.google/technologies/gemini/)
+  ![GitHub stars](https://img.shields.io/github/stars/Ritik0102-bit/Vitalis-AI?style=for-the-badge)
+  ![License](https://img.shields.io/github/license/Ritik0102-bit/Vitalis-AI?style=for-the-badge)
+  ![Last Commit](https://img.shields.io/github/last-commit/Ritik0102-bit/Vitalis-AI?style=for-the-badge)
 </div>
 
 <br />
@@ -22,7 +23,9 @@ Vitalis AI is a clinical-grade, modern healthcare chatbot designed to help users
 ## 📸 Dashboard Preview
 
 ![App Screenshot](./assets/screenshot.png)  
-*(Add your beautiful dashboard screenshot here)*
+![Demo](./assets/demo.gif)
+
+*(Record your app using a screen recorder and upload the GIF to `/assets/demo.gif`)*
 
 ---
 
