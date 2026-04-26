@@ -1394,6 +1394,21 @@ body.light-theme .send-btn:hover { box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4
 .send-btn:active { transform: scale(0.95); }
 .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
 
+.send-btn.stop-btn {
+    background: linear-gradient(135deg, #DC2626, #EF4444, #F87171);
+    box-shadow: 0 4px 16px rgba(239,68,68,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+body.light-theme .send-btn.stop-btn {
+    background: linear-gradient(135deg, #EF4444, #F87171);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+.send-btn.stop-btn:hover {
+    box-shadow: 0 8px 28px rgba(239,68,68,0.55), 0 0 0 1px rgba(248,113,113,0.3);
+}
+body.light-theme .send-btn.stop-btn:hover {
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+}
+
 @keyframes shimmerButton {
     0% { left: -100%; }
     100% { left: 200%; }

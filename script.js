@@ -39,6 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentMimeType = null;
     let isLightMode = false;
     let sidebarOpen = false;
+    
+    let isGenerating = false;
+    let currentAbortController = null;
 
     function showToast(message) {
         toast.textContent = message;
@@ -83,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     quickPromptBtns.forEach(btn => {
         btn.addEventListener("click", () => {
+            if (isGenerating) return;
             const presetText = btn.getAttribute("data-text");
             if (!presetText) return;
             if (window.innerWidth <= 1100) closeSidebar();
@@ -106,6 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (bodyParts) {
         bodyParts.forEach(part => {
             part.addEventListener("click", (e) => {
+                if (isGenerating) return;
                 const partName = e.target.getAttribute("data-part");
                 userInput.value = `I am experiencing pain or symptoms in my ${partName}.`;
                 closeModal(bodyMapModal);
@@ -153,6 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.className = "chip-btn";
             btn.textContent = chipText;
             btn.addEventListener("click", () => {
+                if (isGenerating) return;
                 userInput.value = chipText;
                 suggestionChips.style.display = "none";
                 handleSend();
@@ -223,6 +229,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 let words = [];
                 
                 function type() {
+                    if (currentAbortController && currentAbortController.signal.aborted) {
+                        scrollToBottom();
+                        resolve();
+                        return;
+                    }
                     if (tokenIndex >= tokens.length) {
                         scrollToBottom();
                         resolve();
@@ -367,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.value = "";
     });
 
-    async function fetchAiDiagnosis(symptomsText, base64Image, mimeType) {
+    async function fetchAiDiagnosis(symptomsText, base64Image, mimeType, signal) {
         try {
             const selectedLanguage = document.getElementById("language-select") ? document.getElementById("language-select").value : "English";
 
@@ -384,7 +395,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
+                signal: signal
             });
 
             if (!response.ok) {
@@ -400,15 +412,36 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         } catch (error) {
+            if (error.name === 'AbortError') {
+                return null;
+            }
             console.error("Error making API request:", error);
             return "<span style='color: #F87171;'><i class='fa-solid fa-triangle-exclamation'></i> Connection Error. The AI brain is currently unreachable. Please verify your connection or API configuration.</span>";
         }
     }
 
+    function resetInputState() {
+        isGenerating = false;
+        currentAbortController = null;
+        sendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>';
+        sendBtn.title = "Send Message";
+        sendBtn.classList.remove("stop-btn");
+        
+        userInput.disabled = false;
+        uploadBtn.disabled = false;
+        micBtn.disabled = false;
+        userInput.focus();
+    }
+
     async function handleSend() {
+        if (isGenerating) return;
+
         const text = userInput.value.trim();
         const hasImage = currentBase64Image !== null;
         if (text === "" && !hasImage) return;
+
+        isGenerating = true;
+        currentAbortController = new AbortController();
 
         const imageToDisplay = currentBase64Image;
         const attachedMimeType = currentMimeType;
@@ -422,38 +455,49 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.value = "";
 
         userInput.disabled = true;
-        sendBtn.disabled = true;
         uploadBtn.disabled = true;
         micBtn.disabled = true;
+        
+        sendBtn.innerHTML = '<i class="fa-solid fa-circle-stop"></i>';
+        sendBtn.title = "Stop Generation";
+        sendBtn.classList.add("stop-btn");
 
         addTypingIndicator();
 
-        let responseHTML = await fetchAiDiagnosis(text, imageToDisplay, attachedMimeType);
-
-        const chipRegex = /\[CHIP:\s*(.*?)\]/g;
-        let match;
-        let chips = [];
-        while ((match = chipRegex.exec(responseHTML)) !== null) {
-            chips.push(match[1]);
-        }
-
-        responseHTML = responseHTML.replace(chipRegex, "").trim();
+        let responseHTML = await fetchAiDiagnosis(text, imageToDisplay, attachedMimeType, currentAbortController.signal);
 
         removeTypingIndicator();
-        await addMessage(responseHTML, "bot", true);
-        renderChips(chips);
 
-        userInput.disabled = false;
-        sendBtn.disabled = false;
-        uploadBtn.disabled = false;
-        micBtn.disabled = false;
-        userInput.focus();
+        if (responseHTML !== null) {
+            const chipRegex = /\[CHIP:\s*(.*?)\]/g;
+            let match;
+            let chips = [];
+            while ((match = chipRegex.exec(responseHTML)) !== null) {
+                chips.push(match[1]);
+            }
+
+            responseHTML = responseHTML.replace(chipRegex, "").trim();
+
+            await addMessage(responseHTML, "bot", true);
+            renderChips(chips);
+        }
+
+        resetInputState();
     }
 
-    sendBtn.addEventListener("click", handleSend);
+    sendBtn.addEventListener("click", () => {
+        if (isGenerating) {
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
+            resetInputState();
+            return;
+        }
+        handleSend();
+    });
 
     userInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter" && !userInput.disabled) {
+        if (e.key === "Enter" && !userInput.disabled && !isGenerating) {
             handleSend();
         }
     });
