@@ -156,11 +156,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // FIX 1: Instant theme toggle — no lag
+    // Theme toggle with smooth transition
     themeToggleBtn.addEventListener("click", () => {
-        // Add no-transition class to suppress all transitions instantly
-        document.body.classList.add("no-transition");
-
         isLightMode = !isLightMode;
         if (isLightMode) {
             document.body.classList.add("light-theme");
@@ -169,13 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.remove("light-theme");
             themeToggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
         }
-
-        // Remove no-transition after a single frame so future animations work
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                document.body.classList.remove("no-transition");
-            });
-        });
     });
 
     downloadPdfBtn.addEventListener("click", () => {
