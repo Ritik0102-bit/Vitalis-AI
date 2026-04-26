@@ -128,9 +128,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (submitPainBtn) {
             submitPainBtn.addEventListener("click", () => {
                 const val = painSlider.value;
-                userInput.value = `My current pain intensity is ${val}/10.`;
+                const painText = `My current pain intensity is ${val}/10.`;
+                if (userInput.value.trim() !== "") {
+                    userInput.value = userInput.value.trim() + " " + painText;
+                } else {
+                    userInput.value = painText;
+                }
                 closeModal(painModal);
-                handleSend();
+                userInput.focus();
             });
         }
     }
