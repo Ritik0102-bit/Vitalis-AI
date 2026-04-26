@@ -60,7 +60,7 @@
    THEME TRANSITIONS
    ========================================================================= */
 body {
-    transition: background-color 0.5s ease, background 0.5s ease, color 0.5s ease;
+    transition: background-color 0.4s ease, background 0.4s ease, color 0.4s ease;
 }
 
 /* No-transition helper class for instant theme swap */
@@ -87,10 +87,10 @@ body {
 .preview-container,
 #suggestion-chips {
     transition:
-        background 0.5s ease,
-        color 0.5s ease,
-        border-color 0.5s ease,
-        box-shadow 0.5s ease;
+        background 0.4s ease,
+        color 0.4s ease,
+        border-color 0.4s ease,
+        box-shadow 0.4s ease;
 }
 
 /* =========================================================================
@@ -151,7 +151,7 @@ body::before {
     z-index: 0;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.4s ease;
 }
 
 body.light-theme::before {
@@ -451,6 +451,10 @@ body.light-theme .sidebar-header h3 { color: var(--neon-cyan); }
     min-height: 0;
     position: relative;
     z-index: 2;
+    will-change: transform, scroll-position;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    overscroll-behavior: contain;
 }
 
 .sidebar-content::-webkit-scrollbar { width: 3px; }
@@ -571,6 +575,10 @@ body.light-theme .ekg-line { stroke: var(--stat-value-color); filter: drop-shado
     scrollbar-width: none;
     overflow-y: auto;
     max-height: 400px;
+    will-change: transform, scroll-position;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    overscroll-behavior: contain;
 }
 .prompt-list-wrap::-webkit-scrollbar { display: none; }
 
@@ -940,6 +948,10 @@ body.light-theme .lang-select option { background: #FFFFFF; color: #111827; }
     scroll-behavior: smooth;
     position: relative;
     -webkit-overflow-scrolling: touch;
+    will-change: transform, scroll-position;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    overscroll-behavior: contain;
 }
 
 .chat-messages::-webkit-scrollbar { width: 5px; }
