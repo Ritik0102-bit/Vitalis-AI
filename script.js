@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-            
+    
     // --- AUTH & LOGIN LOGIC ---
     const loginScreen = document.getElementById('login-screen');
     const appWrapper = document.getElementById('app-wrapper');
@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Fetch User Details from Puter
         try {
+            if (typeof puter === 'undefined') return;
             const user = await puter.auth.getUser();
             let customName = await puter.kv.get('preferred_name');
             
@@ -43,20 +44,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Initial check on load
-    async function initAuthCheck() {
+    function initAuthCheck() {
         loginScreen.style.display = 'flex'; // Ensure it's shown immediately
         try {
-            const signedIn = await puter.auth.isSignedIn();
-            if (signedIn) {
-                showAppDashboard();
-            }
+            if (typeof puter === 'undefined') return;
+            puter.auth.isSignedIn().then(signedIn => {
+                if (signedIn) {
+                    showAppDashboard();
+                }
+            });
         } catch (e) {
             console.error("Auth initialization failed", e);
         }
     }
 
+    // Poll for puter object to be ready to avoid ReferenceError
+    const checkPuterInterval = setInterval(() => {
+        if (typeof puter !== 'undefined') {
+            clearInterval(checkPuterInterval);
+            initAuthCheck();
+        }
+    }, 50);
+
     // Manual Sign In Button Click
     puterSigninBtn.addEventListener('click', async () => {
+        if (typeof puter === 'undefined') {
+            showToast("Authentication service is not loaded yet.");
+            return;
+        }
         const enteredName = document.getElementById('custom-name-input').value.trim();
         try {
             await puter.auth.signIn();
@@ -72,13 +87,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Manual Sign Out Button Click
     if (puterSignoutBtn) {
         puterSignoutBtn.addEventListener('click', async () => {
-            await puter.auth.signOut();
+            if (typeof puter !== 'undefined') {
+                await puter.auth.signOut();
+            }
             window.location.reload(); // Quickest way to safely reset dashboard state
         });
     }
-
-    // Run the check when the page loads
-    initAuthCheck();
     
     
     // --- EXISTING DASHBOARD LOGIC ---
@@ -377,8 +391,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function removeTypingIndicator() {
-        const indicator = document.getElementById("typing");
-        if (indicator) indicator.remove();
+        const indicators = document.querySelectorAll(".typing-indicator");
+        indicators.forEach(ind => ind.remove());
     }
 
     function scrollToBottom() {
@@ -478,8 +492,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
             messages.push({ role: "user", content: contentArray });
 
+            // Create a promise that resolves when the abort signal is triggered
+            const abortPromise = new Promise((resolve) => {
+                if (signal) {
+                    if (signal.aborted) resolve(null);
+                    signal.addEventListener('abort', () => resolve(null));
+                }
+            });
+
             // Uses the user's free Puter.com account resources seamlessly!
-            const response = await puter.ai.chat(messages);
+            // We race it against the abortPromise to prevent blocking
+            const chatPromise = typeof puter !== 'undefined' ? puter.ai.chat(messages) : Promise.reject("Puter is not loaded.");
+            chatPromise.catch(e => console.debug("Background fetch safely ignored:", e));
+            
+            const response = await Promise.race([chatPromise, abortPromise]);
 
             if (signal && signal.aborted) {
                 return null;
@@ -575,8 +601,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (currentAbortController) {
                 currentAbortController.abort();
             }
-            resetInputState();
-            return;
+            return; // Return instantly, let handleSend clean up asynchronously
         }
         handleSend();
     });
@@ -588,6 +613,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     clearBtn.addEventListener("click", () => {
+        if (isGenerating && currentAbortController) {
+            currentAbortController.abort();
+        }
         const msgs = document.querySelectorAll('.message');
         msgs.forEach(msg => {
             msg.style.transform = "scale(0)";
