@@ -6,15 +6,15 @@
     <title>Vitalis AI - Health Assistant</title>
     <meta name="description" content="AI Symptom Checker - A modern health assistant to analyze symptoms and reports.">
     
-    <!-- Fonts & Icons -->
+    <!-- External Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- External Scripts -->
+    <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://js.puter.com/v2/"></script>
     
-    <!-- Custom Styles -->
+    <!-- Link to external CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -28,7 +28,7 @@
         <div class="login-box">
             <i class="fa-solid fa-heart-pulse login-logo"></i>
             <h2 style="font-family: var(--font-heading); color: var(--neon-cyan); margin-bottom: 10px; font-size: 1.8rem; font-weight: 700;">Vitalis AI</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 0.95rem; line-height: 1.5;">Please enter your name and securely authenticate to access your dashboard.</p>
+            <p style="color: var(--text-primary); margin-bottom: 24px; font-size: 0.95rem; line-height: 1.5;">Please enter your name and securely authenticate to access your dashboard.</p>
             
             <input type="text" id="custom-name-input" class="login-input" placeholder="Enter your name (optional)" autocomplete="off">
 
@@ -38,6 +38,7 @@
         </div>
     </div>
 
+    <!-- BACKGROUND ANIMATIONS -->
     <div class="bg-canvas">
         <div class="cellular-pattern"></div>
         <div class="bg-mesh"></div>
@@ -48,6 +49,7 @@
         <div class="vignette"></div>
     </div>
 
+    <!-- HUD ELEMENTS -->
     <div class="floating-bg">
         <div class="hud-ring hud-ring-1"></div>
         <div class="hud-ring hud-ring-2"></div>
@@ -60,10 +62,12 @@
         <i class="fa-solid fa-truck-medical float-item" style="top: 85%; left: 60%; animation-delay: 2.5s;"></i>
     </div>
 
+    <!-- MAIN APP DASHBOARD -->
     <div class="app-wrapper" id="app-wrapper">
 
         <div class="mobile-overlay" id="mobile-overlay"></div>
 
+        <!-- LEFT SIDEBAR -->
         <aside class="sidebar left-sidebar" id="left-sidebar">
             <div class="sidebar-header">
                 <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
@@ -108,6 +112,7 @@
                         <i class="fa-solid fa-hand-dots"></i> Skin Rash / Allergy
                     </button>
                 </div>
+                
                 <div class="card emergency-card">
                     <h4><i class="fa-solid fa-phone-volume"></i> Emergency</h4>
                     <p class="text-sm">In a life-threatening situation, immediately call local emergency services (e.g. 108 / 112).</p>
@@ -115,6 +120,7 @@
             </div>
         </aside>
 
+        <!-- CENTER CHAT INTERFACE -->
         <main class="chat-container">
             <div class="chat-header">
                 <div class="header-info">
@@ -172,27 +178,27 @@
             </div>
         </main>
 
+        <!-- RIGHT SIDEBAR -->
         <aside class="sidebar right-sidebar" id="right-sidebar">
             <div class="sidebar-header">
                 <h3><i class="fa-solid fa-circle-info"></i> Information</h3>
             </div>
             <div class="sidebar-content">
 
-                <!-- NEW: Patient Profile Card -->
-                <div class="card" id="user-profile-card" style="display: none; border-color: rgba(124, 58, 237, 0.4);">
-                    <h4><i class="fa-solid fa-circle-user" style="color: var(--neon-purple);"></i> Patient Profile</h4>
+                <div class="card" id="user-profile-card" style="display: none; border-color: rgba(28, 93, 153, 0.5);">
+                    <h4><i class="fa-solid fa-circle-user" style="color: var(--neon-cyan);"></i> Patient Profile</h4>
                     <div class="bio-stat">
                         <span class="bio-stat-label"><i class="fa-solid fa-id-badge"></i> Name</span>
                         <span class="bio-stat-value" id="display-user-name" style="color: var(--text-primary); font-size: 0.95rem;">...</span>
                     </div>
                     <div class="bio-stat" style="border: none; padding-top: 14px;">
-                        <button id="puter-signout-btn" class="quick-prompt-btn" style="color: #F87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.05); justify-content: center; margin-bottom: 0;">
-                            <i class="fa-solid fa-right-from-bracket" style="color: #F87171;"></i> Sign Out
+                        <button id="puter-signout-btn" class="quick-prompt-btn" style="color: #FA824C; border-color: rgba(250, 130, 76, 0.4); background: rgba(250, 130, 76, 0.1); justify-content: center; margin-bottom: 0;">
+                            <i class="fa-solid fa-right-from-bracket" style="color: #FA824C;"></i> Sign Out
                         </button>
                     </div>
                 </div>
 
-                <div class="card" style="border-color: rgba(34, 211, 238, 0.3);">
+                <div class="card" style="border-color: rgba(99, 159, 171, 0.3);">
                     <h4><i class="fa-solid fa-heart-crack" style="color: var(--neon-cyan);"></i> Live Monitoring</h4>
                     <p class="text-sm">Resting Heart Rate: <strong class="stat-value" style="font-size: 1.1rem; margin-left: 5px;">72 BPM</strong></p>
                     <div class="ekg-monitor">
@@ -206,7 +212,7 @@
                 <div class="card status-card">
                     <div class="status-indicator">
                         <i class="fa-solid fa-server" style="color: var(--stat-icon-color); margin-right: 8px;"></i>
-                        <span style="font-family: var(--font-body); font-size: 0.9rem;">AI Engine: <strong style="font-family: var(--font-heading); color: var(--stat-value-color);">Puter AI</strong></span>
+                        <span style="font-family: var(--font-body); font-size: 0.9rem;">AI Engine: <strong style="font-family: var(--font-heading); color: var(--stat-value-color);">Grok</strong></span>
                     </div>
                     <div class="status-indicator" style="margin-top: 10px;">
                         <i class="fa-solid fa-shield-cat" style="color: var(--stat-icon-color); margin-right: 8px;"></i>
@@ -226,6 +232,7 @@
 
     </div>
 
+    <!-- MODALS -->
     <div id="body-map-modal" class="modal-overlay">
         <div class="modal-content text-center">
             <h3><i class="fa-solid fa-child"></i> Symptom Region Selector</h3>
@@ -265,7 +272,7 @@
 
     <div id="toast" class="toast"></div>
 
-    <!-- Custom Script -->
+    <!-- Link to external JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>
