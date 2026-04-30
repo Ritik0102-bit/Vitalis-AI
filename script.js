@@ -1,4 +1,87 @@
 document.addEventListener("DOMContentLoaded", () => {
+            
+    // --- AUTH & LOGIN LOGIC ---
+    const loginScreen = document.getElementById('login-screen');
+    const appWrapper = document.getElementById('app-wrapper');
+    const puterSigninBtn = document.getElementById('puter-signin-btn');
+    const userProfileCard = document.getElementById('user-profile-card');
+    const displayUserName = document.getElementById('display-user-name');
+    const puterSignoutBtn = document.getElementById('puter-signout-btn');
+    const toast = document.getElementById("toast");
+
+    function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    // Function to transition to the main app dashboard
+    async function showAppDashboard() {
+        // Fade out login screen
+        loginScreen.style.opacity = '0';
+        
+        setTimeout(() => {
+            loginScreen.style.display = 'none';
+            // Trigger the app wrapper entrance animation
+            appWrapper.classList.add('loaded');
+        }, 500);
+
+        // Fetch User Details from Puter
+        try {
+            const user = await puter.auth.getUser();
+            let customName = await puter.kv.get('preferred_name');
+            
+            if (customName) {
+                displayUserName.textContent = customName;
+            } else if (user && user.username) {
+                displayUserName.textContent = user.username;
+            }
+            userProfileCard.style.display = 'block';
+        } catch(e) {
+            console.error("Could not fetch user profile", e);
+        }
+    }
+
+    // Initial check on load
+    async function initAuthCheck() {
+        loginScreen.style.display = 'flex'; // Ensure it's shown immediately
+        try {
+            const signedIn = await puter.auth.isSignedIn();
+            if (signedIn) {
+                showAppDashboard();
+            }
+        } catch (e) {
+            console.error("Auth initialization failed", e);
+        }
+    }
+
+    // Manual Sign In Button Click
+    puterSigninBtn.addEventListener('click', async () => {
+        const enteredName = document.getElementById('custom-name-input').value.trim();
+        try {
+            await puter.auth.signIn();
+            if (enteredName) {
+                await puter.kv.set('preferred_name', enteredName);
+            }
+            showAppDashboard();
+        } catch (e) {
+            showToast("Sign in was cancelled or failed.");
+        }
+    });
+
+    // Manual Sign Out Button Click
+    if (puterSignoutBtn) {
+        puterSignoutBtn.addEventListener('click', async () => {
+            await puter.auth.signOut();
+            window.location.reload(); // Quickest way to safely reset dashboard state
+        });
+    }
+
+    // Run the check when the page loads
+    initAuthCheck();
+    
+    
+    // --- EXISTING DASHBOARD LOGIC ---
     const chatMessages = document.getElementById("chat-messages");
     const userInput = document.getElementById("user-input");
     const sendBtn = document.getElementById("send-btn");
@@ -9,12 +92,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const previewContainer = document.getElementById("preview-container");
     const imagePreview = document.getElementById("image-preview");
     const removeImageBtn = document.getElementById("remove-image");
-    const toast = document.getElementById("toast");
     const themeToggleBtn = document.getElementById("theme-toggle");
     const downloadPdfBtn = document.getElementById("download-pdf");
     const emptyState = document.getElementById("empty-state");
 
-    // FIX 3: Heart icon as sidebar toggle
     const sidebarToggle = document.getElementById("sidebar-toggle");
     const leftSidebar = document.getElementById("left-sidebar");
     const mobileOverlay = document.getElementById("mobile-overlay");
@@ -43,13 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let isGenerating = false;
     let currentAbortController = null;
 
-    function showToast(message) {
-        toast.textContent = message;
-        toast.classList.add("show");
-        setTimeout(() => toast.classList.remove("show"), 3000);
-    }
-
-    // FIX 4: Sidebar toggle — only on mobile/tablet
     function openSidebar() {
         if (window.innerWidth > 1100) return;
         leftSidebar.classList.add("active");
@@ -73,7 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // FIX 3: Heart icon triggers sidebar on mobile
     if (sidebarToggle) {
         sidebarToggle.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -167,7 +240,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Theme toggle with smooth transition
     themeToggleBtn.addEventListener("click", () => {
         isLightMode = !isLightMode;
         if (isLightMode) {
@@ -260,7 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         msgDiv.innerHTML = currentHTML;
                         scrollToBottom();
                         wordIndex++;
-                        setTimeout(type, 35);
+                        setTimeout(type, 20); // Sped up slightly for better UX
                     } else {
                         tokenIndex++;
                         wordIndex = 0;
@@ -378,45 +450,58 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.value = "";
     });
 
-    async function fetchAiDiagnosis(symptomsText, base64Image, mimeType, signal) {
+    // Puter.js chat integration
+    async function fetchAiDiagnosis(symptomsText, base64ImageRaw, mimeType, signal) {
         try {
             const selectedLanguage = document.getElementById("language-select") ? document.getElementById("language-select").value : "English";
-
-            const payload = {
-                symptomsText: symptomsText,
-                language: selectedLanguage
-            };
-
-            if (base64Image && mimeType) {
-                payload.base64Image = base64Image.split(',')[1];
-                payload.mimeType = mimeType;
-            }
-
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                signal: signal
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
             
-            if (data.reply) {
-                return data.reply;
+            const systemPrompt = `You are Vitalis AI, an advanced health assistant. Analyze the symptoms or reports provided. Respond in ${selectedLanguage}. IMPORTANT: You are an AI, provide educational info but no official medical diagnosis. Use HTML for formatting, convert **bold** to <strong>bold</strong>, format lists properly. You can optionally include 1-3 short follow-up prompts wrapped in [CHIP: prompt text] at the very end of your response for suggestion chips.`;
+
+            let messages = [
+                { role: "system", content: systemPrompt }
+            ];
+
+            let contentArray = [];
+            
+            if (symptomsText) {
+                contentArray.push({ type: "text", text: symptomsText });
             } else {
-                return "I'm sorry, I couldn't formulate a diagnosis framework.";
+                contentArray.push({ type: "text", text: "Please analyze the attached image." });
             }
+
+            if (base64ImageRaw) {
+                contentArray.push({
+                    type: "image_url",
+                    image_url: { url: base64ImageRaw }
+                });
+            }
+
+            messages.push({ role: "user", content: contentArray });
+
+            // Uses the user's free Puter.com account resources seamlessly!
+            const response = await puter.ai.chat(messages);
+
+            if (signal && signal.aborted) {
+                return null;
+            }
+
+            let responseText = "I'm sorry, I couldn't formulate a diagnosis framework.";
+            if (typeof response === 'string') {
+                responseText = response;
+            } else if (response && response.message && response.message.content) {
+                responseText = response.message.content;
+            } else if (response && response.text) {
+                responseText = response.text;
+            }
+
+            return responseText;
 
         } catch (error) {
-            if (error.name === 'AbortError') {
+            if (signal && signal.aborted) {
                 return null;
             }
             console.error("Error making API request:", error);
-            return "<span style='color: #F87171;'><i class='fa-solid fa-triangle-exclamation'></i> Connection Error. The AI brain is currently unreachable. Please verify your connection or API configuration.</span>";
+            return `<span style='color: #F87171;'><i class='fa-solid fa-triangle-exclamation'></i> Connection Error or Authentication Required. Please make sure to sign in via the Puter popup or verify your connectivity.</span>`;
         }
     }
 
