@@ -469,7 +469,10 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const selectedLanguage = document.getElementById("language-select") ? document.getElementById("language-select").value : "English";
             
-            const systemPrompt = `You are Vitalis AI, an advanced health assistant. Analyze the symptoms or reports provided. Respond in ${selectedLanguage}. IMPORTANT: You are an AI, provide educational info but no official medical diagnosis. Use HTML for formatting, convert **bold** to <strong>bold</strong>, format lists properly. You can optionally include 1-3 short follow-up prompts wrapped in [CHIP: prompt text] at the very end of your response for suggestion chips.`;
+            const systemPrompt = `Persona: You are Vitalis AI, an advanced and empathetic health assistant.
+Task: Analyze the provided symptoms or medical reports. If the user's query is NOT related to healthcare, politely and softly decline to answer (e.g., "I am a medical assistant and can only help with health-related queries.").
+Context: You provide educational medical information, but never an official diagnosis.
+Format: Keep responses highly crisp, concise, and short. You MUST respond EXCLUSIVELY and ENTIRELY in ${selectedLanguage} (do not mix languages). Use HTML for formatting (convert **bold** to <strong>bold</strong>, format lists). Include 1-3 short follow-up prompts strictly in ${selectedLanguage} wrapped in [CHIP: prompt text] at the very end.`;
 
             let messages = [
                 { role: "system", content: systemPrompt }
