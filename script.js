@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let currentBase64Image = null;
     let currentMimeType = null;
-    let isLightMode = false;
+    let isLightMode = true;
     let sidebarOpen = false;
     
     let isGenerating = false;
