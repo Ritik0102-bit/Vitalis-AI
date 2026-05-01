@@ -333,8 +333,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         return;
                     }
                     if (wordIndex === 0) {
-                         words = token.match(/\S+\s*/g) || [];
-                         if (words.length === 0 && token.trim() === '') {
+                         words = token.match(/\s*\S+\s*/g) || [];
+                         if (words.length === 0) {
                              currentHTML += token;
                              tokenIndex++;
                              type();
@@ -478,22 +478,21 @@ Format: Keep responses highly crisp, concise, and short. You MUST respond EXCLUS
                 { role: "system", content: systemPrompt }
             ];
 
-            let contentArray = [];
-            
-            if (symptomsText) {
-                contentArray.push({ type: "text", text: symptomsText });
-            } else {
-                contentArray.push({ type: "text", text: "Please analyze the attached image." });
-            }
-
             if (base64ImageRaw) {
+                let contentArray = [];
+                if (symptomsText) {
+                    contentArray.push({ type: "text", text: symptomsText });
+                } else {
+                    contentArray.push({ type: "text", text: "Please analyze the attached image." });
+                }
                 contentArray.push({
                     type: "image_url",
                     image_url: { url: base64ImageRaw }
                 });
+                messages.push({ role: "user", content: contentArray });
+            } else {
+                messages.push({ role: "user", content: symptomsText });
             }
-
-            messages.push({ role: "user", content: contentArray });
 
             // Create a promise that resolves when the abort signal is triggered
             const abortPromise = new Promise((resolve) => {
