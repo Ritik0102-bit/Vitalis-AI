@@ -94,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
-    
     // --- EXISTING DASHBOARD LOGIC ---
     const chatMessages = document.getElementById("chat-messages");
     const userInput = document.getElementById("user-input");
@@ -302,7 +301,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 content += `<img src="${imageSrc}" class="user-img-attachment">`;
             }
 
-            let parsedText = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+            // --- NEW FORMATTING LOGIC ---
+            let safeText = String(text || "");
+            
+            // 1. Fix escaped newlines if they snuck through
+            safeText = safeText.replace(/\\n/g, "\n"); 
+            
+            // 2. Convert markdown bolding
+            let parsedText = safeText.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+            
+            // 3. Convert literal newlines to HTML breaks so the UI formats lists properly
+            parsedText = parsedText.replace(/\n/g, "<br>");
+            // ----------------------------
 
             if (sender === "bot") {
                 chatMessages.appendChild(msgDiv);
@@ -464,7 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.value = "";
     });
 
-    // Puter.js chat integration
+    // --- REWRITTEN BULLETPROOF PUTER API PARSER ---
     async function fetchAiDiagnosis(symptomsText, base64ImageRaw, mimeType, signal) {
         try {
             const selectedLanguage = document.getElementById("language-select") ? document.getElementById("language-select").value : "English";
@@ -494,7 +504,6 @@ Format: Keep responses highly crisp, concise, and short. You MUST respond EXCLUS
                 messages.push({ role: "user", content: symptomsText });
             }
 
-            // Create a promise that resolves when the abort signal is triggered
             const abortPromise = new Promise((resolve) => {
                 if (signal) {
                     if (signal.aborted) resolve(null);
@@ -502,34 +511,70 @@ Format: Keep responses highly crisp, concise, and short. You MUST respond EXCLUS
                 }
             });
 
-            // Uses the user's free Puter.com account resources seamlessly!
-            // We race it against the abortPromise to prevent blocking
-            const chatPromise = typeof puter !== 'undefined' ? puter.ai.chat(messages) : Promise.reject("Puter is not loaded.");
-            chatPromise.catch(e => console.debug("Background fetch safely ignored:", e));
-            
-            const response = await Promise.race([chatPromise, abortPromise]);
+            // Safely execute the API call and catch network failures IMMEDIATELY
+            let apiPromise;
+            if (typeof puter !== 'undefined' && puter.ai && typeof puter.ai.chat === 'function') {
+                apiPromise = puter.ai.chat(messages).catch(e => {
+                    console.error("Puter API Error:", e);
+                    return { error_fallback: true, message: e.message || String(e) };
+                });
+            } else {
+                apiPromise = Promise.resolve({ error_fallback: true, message: "Puter AI is not loaded." });
+            }
+
+            const response = await Promise.race([apiPromise, abortPromise]);
 
             if (signal && signal.aborted) {
                 return null;
             }
 
-            let responseText = "I'm sorry, I couldn't formulate a diagnosis framework.";
-            if (typeof response === 'string') {
-                responseText = response;
-            } else if (response && response.message && response.message.content) {
-                responseText = response.message.content;
-            } else if (response && response.text) {
-                responseText = response.text;
+            if (response && response.error_fallback) {
+                return `<span style='color: #F87171;'><i class='fa-solid fa-triangle-exclamation'></i> Connection Error: ${response.message}</span>`;
             }
 
-            return responseText;
+            // SMART PARSER: Extracts text from nested arrays/objects
+            function parseAiResponse(res) {
+                if (typeof res === 'string') {
+                    try {
+                        let parsed = JSON.parse(res);
+                        return parseAiResponse(parsed); 
+                    } catch (e) {
+                        return res; 
+                    }
+                }
+                if (Array.isArray(res)) {
+                    return res.map(block => block.text || '').join('');
+                }
+                if (typeof res === 'object' && res !== null) {
+                    let target = res.content || (res.message && res.message.content) || res.text;
+                    if (target) return parseAiResponse(target); 
+                    try { return JSON.stringify(res); } catch(e) { return "Unparseable response"; }
+                }
+                return String(res);
+            }
+
+            let responseText = "";
+
+            if (!response) {
+                responseText = "I'm sorry, I received an empty response from the server.";
+            } else if (typeof response.text === 'function') {
+                try {
+                    responseText = parseAiResponse(await response.text());
+                } catch (e) {
+                    responseText = "Error reading response stream.";
+                }
+            } else {
+                responseText = parseAiResponse(response);
+            }
+
+            return responseText || "I'm sorry, I couldn't process the diagnosis framework.";
 
         } catch (error) {
             if (signal && signal.aborted) {
                 return null;
             }
-            console.error("Error making API request:", error);
-            return `<span style='color: #F87171;'><i class='fa-solid fa-triangle-exclamation'></i> Connection Error or Authentication Required. Please make sure to sign in via the Puter popup or verify your connectivity.</span>`;
+            console.error("Critical error in fetchAiDiagnosis:", error);
+            return `<span style='color: #F87171;'><i class='fa-solid fa-triangle-exclamation'></i> Critical Connection Error. Please verify your connectivity.</span>`;
         }
     }
 
@@ -559,6 +604,7 @@ Format: Keep responses highly crisp, concise, and short. You MUST respond EXCLUS
         const imageToDisplay = currentBase64Image;
         const attachedMimeType = currentMimeType;
 
+        // Append user message immediately
         addMessage(text, "user", false, imageToDisplay);
 
         userInput.value = "";
@@ -570,32 +616,42 @@ Format: Keep responses highly crisp, concise, and short. You MUST respond EXCLUS
         userInput.disabled = true;
         uploadBtn.disabled = true;
         micBtn.disabled = true;
-        
+
         sendBtn.innerHTML = '<i class="fa-solid fa-circle-stop"></i>';
         sendBtn.title = "Stop Generation";
         sendBtn.classList.add("stop-btn");
 
         addTypingIndicator();
 
-        let responseHTML = await fetchAiDiagnosis(text, imageToDisplay, attachedMimeType, currentAbortController.signal);
+        try {
+            let responseHTML = await fetchAiDiagnosis(text, imageToDisplay, attachedMimeType, currentAbortController.signal);
+            
+            removeTypingIndicator();
 
-        removeTypingIndicator();
+            if (responseHTML !== null) {
+                // Safely convert to string
+                responseHTML = String(responseHTML);
+                
+                const chipRegex = /\[CHIP:\s*(.*?)\]/g;
+                let match;
+                let chips = [];
+                while ((match = chipRegex.exec(responseHTML)) !== null) {
+                    chips.push(match[1]);
+                }
 
-        if (responseHTML !== null) {
-            const chipRegex = /\[CHIP:\s*(.*?)\]/g;
-            let match;
-            let chips = [];
-            while ((match = chipRegex.exec(responseHTML)) !== null) {
-                chips.push(match[1]);
+                responseHTML = responseHTML.replace(chipRegex, "").trim();
+
+                await addMessage(responseHTML, "bot", true);
+                renderChips(chips);
             }
-
-            responseHTML = responseHTML.replace(chipRegex, "").trim();
-
-            await addMessage(responseHTML, "bot", true);
-            renderChips(chips);
+        } catch (error) {
+            console.error("Critical error in handleSend:", error);
+            removeTypingIndicator();
+            await addMessage("A critical application error occurred. Please try again.", "bot", false);
+        } finally {
+            // This will ALWAYS run, guaranteeing the UI unfreezes!
+            resetInputState();
         }
-
-        resetInputState();
     }
 
     sendBtn.addEventListener("click", () => {
