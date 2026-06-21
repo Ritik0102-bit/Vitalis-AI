@@ -3,11 +3,23 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- AUTH & LOGIN LOGIC ---
     const loginScreen = document.getElementById('login-screen');
     const appWrapper = document.getElementById('app-wrapper');
-    const puterSigninBtn = document.getElementById('puter-signin-btn');
+    const googleSigninBtn = document.getElementById('google-signin-btn');
     const userProfileCard = document.getElementById('user-profile-card');
     const displayUserName = document.getElementById('display-user-name');
-    const puterSignoutBtn = document.getElementById('puter-signout-btn');
+    const displayUserEmail = document.getElementById('display-user-email');
+    const displayUserPhoto = document.getElementById('display-user-photo');
+    const displayUserAge = document.getElementById('display-user-age');
+    const displayUserGender = document.getElementById('display-user-gender');
+    const googleSignoutBtn = document.getElementById('google-signout-btn');
     const toast = document.getElementById("toast");
+
+    // Onboarding Modal Elements
+    const onboardingModal = document.getElementById('onboarding-modal');
+    const onboardingAge = document.getElementById('onboarding-age');
+    const onboardingGender = document.getElementById('onboarding-gender');
+    const saveOnboardingBtn = document.getElementById('save-onboarding-btn');
+
+    let currentUser = null;
 
     function showToast(message) {
         toast.textContent = message;
@@ -15,8 +27,68 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => toast.classList.remove("show"), 3000);
     }
 
+    async function checkAndShowOnboarding(user) {
+        // Fetch age/gender from NeonDB via our Vercel API
+        try {
+            const response = await fetch(`/api/getUser?id=${user.uid}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.age && data.gender) {
+                    displayUserAge.textContent = data.age;
+                    displayUserGender.textContent = data.gender;
+                    return false; // No onboarding needed
+                }
+            }
+        } catch (e) {
+            console.error("Error fetching user data", e);
+        }
+        
+        // Show modal if missing data
+        onboardingModal.classList.add("active");
+        return true;
+    }
+
+    saveOnboardingBtn.addEventListener("click", async () => {
+        const age = onboardingAge.value;
+        const gender = onboardingGender.value;
+
+        if (!age || !gender) {
+            showToast("Please fill in both Age and Gender.");
+            return;
+        }
+
+        if (currentUser) {
+            try {
+                const response = await fetch('/api/saveUser', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: currentUser.uid,
+                        name: currentUser.displayName,
+                        email: currentUser.email,
+                        age: age,
+                        gender: gender
+                    })
+                });
+                
+                if (response.ok) {
+                    displayUserAge.textContent = age;
+                    displayUserGender.textContent = gender;
+                    onboardingModal.classList.remove("active");
+                    showToast("Profile updated successfully!");
+                } else {
+                    showToast("Failed to save profile.");
+                }
+            } catch (e) {
+                console.error("Error saving user data", e);
+                showToast("Connection error while saving.");
+            }
+        }
+    });
+
     // Function to transition to the main app dashboard
-    async function showAppDashboard() {
+    async function showAppDashboard(user) {
+        currentUser = user;
         // Fade out login screen
         loginScreen.style.opacity = '0';
         
@@ -26,71 +98,58 @@ document.addEventListener("DOMContentLoaded", () => {
             appWrapper.classList.add('loaded');
         }, 500);
 
-        // Fetch User Details from Puter
-        try {
-            if (typeof puter === 'undefined') return;
-            const user = await puter.auth.getUser();
-            let customName = await puter.kv.get('preferred_name');
-            
-            if (customName) {
-                displayUserName.textContent = customName;
-            } else if (user && user.username) {
-                displayUserName.textContent = user.username;
+        // Populate User Details
+        if (user) {
+            displayUserName.textContent = user.displayName || "User";
+            displayUserEmail.textContent = user.email || "";
+            if (user.photoURL) {
+                displayUserPhoto.src = user.photoURL;
             }
             userProfileCard.style.display = 'block';
-        } catch(e) {
-            console.error("Could not fetch user profile", e);
+            
+            checkAndShowOnboarding(user);
         }
     }
 
-    // Initial check on load
-    function initAuthCheck() {
-        loginScreen.style.display = 'flex'; // Ensure it's shown immediately
-        try {
-            if (typeof puter === 'undefined') return;
-            puter.auth.isSignedIn().then(signedIn => {
-                if (signedIn) {
-                    showAppDashboard();
+    // Wait for Firebase to initialize then check auth state
+    const checkFirebaseInterval = setInterval(() => {
+        if (window.firebaseAuth) {
+            clearInterval(checkFirebaseInterval);
+            
+            window.firebaseAuth.onAuthStateChanged(window.firebaseAuth.auth, (user) => {
+                if (user) {
+                    showAppDashboard(user);
+                } else {
+                    loginScreen.style.display = 'flex';
                 }
             });
-        } catch (e) {
-            console.error("Auth initialization failed", e);
-        }
-    }
-
-    // Poll for puter object to be ready to avoid ReferenceError
-    const checkPuterInterval = setInterval(() => {
-        if (typeof puter !== 'undefined') {
-            clearInterval(checkPuterInterval);
-            initAuthCheck();
         }
     }, 50);
 
     // Manual Sign In Button Click
-    puterSigninBtn.addEventListener('click', async () => {
-        if (typeof puter === 'undefined') {
-            showToast("Authentication service is not loaded yet.");
-            return;
-        }
-        const enteredName = document.getElementById('custom-name-input').value.trim();
-        try {
-            await puter.auth.signIn();
-            if (enteredName) {
-                await puter.kv.set('preferred_name', enteredName);
+    if (googleSigninBtn) {
+        googleSigninBtn.addEventListener('click', async () => {
+            if (!window.firebaseAuth) {
+                showToast("Authentication service is not loaded yet.");
+                return;
             }
-            showAppDashboard();
-        } catch (e) {
-            showToast("Sign in was cancelled or failed.");
-        }
-    });
+            try {
+                await window.firebaseAuth.signInWithPopup(window.firebaseAuth.auth, window.firebaseAuth.provider);
+                // onAuthStateChanged will handle the dashboard transition
+            } catch (error) {
+                console.error("Google Sign-In Error:", error);
+                showToast("Sign in failed or was cancelled.");
+            }
+        });
+    }
 
     // Manual Sign Out Button Click
-    if (puterSignoutBtn) {
-        puterSignoutBtn.addEventListener('click', async () => {
-            if (typeof puter !== 'undefined') {
-                await puter.auth.signOut();
+    if (googleSignoutBtn) {
+        googleSignoutBtn.addEventListener('click', async () => {
+            if (window.firebaseAuth) {
+                await window.firebaseAuth.signOut(window.firebaseAuth.auth);
             }
-            window.location.reload(); // Quickest way to safely reset dashboard state
+            window.location.reload(); 
         });
     }
     
@@ -474,35 +533,16 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.value = "";
     });
 
-    // --- REWRITTEN BULLETPROOF PUTER API PARSER ---
+    // --- CUSTOM LLM API INTEGRATION ---
     async function fetchAiDiagnosis(symptomsText, base64ImageRaw, mimeType, signal) {
         try {
             const selectedLanguage = document.getElementById("language-select") ? document.getElementById("language-select").value : "English";
             
-            const systemPrompt = `Persona: You are Vitalis AI, an advanced and empathetic health assistant.
-Task: Analyze the provided symptoms or medical reports. If the user's query is NOT related to healthcare, politely and softly decline to answer (e.g., "I am a medical assistant and can only help with health-related queries.").
-Context: You provide educational medical information, but never an official diagnosis.
-Format: Keep responses highly crisp, concise, and short. You MUST respond EXCLUSIVELY and ENTIRELY in ${selectedLanguage} (do not mix languages). Use HTML for formatting (convert **bold** to <strong>bold</strong>, format lists). Include 1-3 short follow-up prompts strictly in ${selectedLanguage} wrapped in [CHIP: prompt text] at the very end.`;
-
-            let messages = [
-                { role: "system", content: systemPrompt }
-            ];
-
-            if (base64ImageRaw) {
-                let contentArray = [];
-                if (symptomsText) {
-                    contentArray.push({ type: "text", text: symptomsText });
-                } else {
-                    contentArray.push({ type: "text", text: "Please analyze the attached image." });
-                }
-                contentArray.push({
-                    type: "image_url",
-                    image_url: { url: base64ImageRaw }
-                });
-                messages.push({ role: "user", content: contentArray });
-            } else {
-                messages.push({ role: "user", content: symptomsText });
-            }
+            const payload = {
+                message: symptomsText,
+                language: selectedLanguage,
+                image: base64ImageRaw || null
+            };
 
             const abortPromise = new Promise((resolve) => {
                 if (signal) {
@@ -511,63 +551,32 @@ Format: Keep responses highly crisp, concise, and short. You MUST respond EXCLUS
                 }
             });
 
-            // Safely execute the API call and catch network failures IMMEDIATELY
-            let apiPromise;
-            if (typeof puter !== 'undefined' && puter.ai && typeof puter.ai.chat === 'function') {
-                apiPromise = puter.ai.chat(messages).catch(e => {
-                    console.error("Puter API Error:", e);
-                    return { error_fallback: true, message: e.message || String(e) };
-                });
-            } else {
-                apiPromise = Promise.resolve({ error_fallback: true, message: "Puter AI is not loaded." });
-            }
+            // We will call our custom Vercel /api/chat endpoint
+            // This endpoint will connect to the hosted Custom Healthcare LLM
+            const apiPromise = fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: signal
+            }).then(async res => {
+                if (!res.ok) {
+                    throw new Error("API responded with status: " + res.status);
+                }
+                const data = await res.json();
+                return data.response;
+            }).catch(e => {
+                if (e.name === 'AbortError') return null;
+                console.error("Custom AI API Error:", e);
+                return `<span style='color: #F87171;'><i class='fa-solid fa-triangle-exclamation'></i> Connection Error: ${e.message}</span>`;
+            });
 
-            const response = await Promise.race([apiPromise, abortPromise]);
+            const responseText = await Promise.race([apiPromise, abortPromise]);
 
             if (signal && signal.aborted) {
                 return null;
             }
 
-            if (response && response.error_fallback) {
-                return `<span style='color: #F87171;'><i class='fa-solid fa-triangle-exclamation'></i> Connection Error: ${response.message}</span>`;
-            }
-
-            // SMART PARSER: Extracts text from nested arrays/objects
-            function parseAiResponse(res) {
-                if (typeof res === 'string') {
-                    try {
-                        let parsed = JSON.parse(res);
-                        return parseAiResponse(parsed); 
-                    } catch (e) {
-                        return res; 
-                    }
-                }
-                if (Array.isArray(res)) {
-                    return res.map(block => block.text || '').join('');
-                }
-                if (typeof res === 'object' && res !== null) {
-                    let target = res.content || (res.message && res.message.content) || res.text;
-                    if (target) return parseAiResponse(target); 
-                    try { return JSON.stringify(res); } catch(e) { return "Unparseable response"; }
-                }
-                return String(res);
-            }
-
-            let responseText = "";
-
-            if (!response) {
-                responseText = "I'm sorry, I received an empty response from the server.";
-            } else if (typeof response.text === 'function') {
-                try {
-                    responseText = parseAiResponse(await response.text());
-                } catch (e) {
-                    responseText = "Error reading response stream.";
-                }
-            } else {
-                responseText = parseAiResponse(response);
-            }
-
-            return responseText || "I'm sorry, I couldn't process the diagnosis framework.";
+            return responseText || "I'm sorry, I couldn't process the diagnosis.";
 
         } catch (error) {
             if (signal && signal.aborted) {

@@ -12,7 +12,28 @@
     
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://js.puter.com/v2/"></script>
+    
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJ4FrgCf8UGOARS3bxgffAzk6qwWufRgI",
+  authDomain: "vitalis-ai-90b46.firebaseapp.com",
+  projectId: "vitalis-ai-90b46",
+  storageBucket: "vitalis-ai-90b46.firebasestorage.app",
+  messagingSenderId: "959531836387",
+  appId: "1:959531836387:web:3f1d491df65d14c05776d6",
+  measurementId: "G-CWEDD4L64G"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        window.firebaseAuth = { auth, provider, signInWithPopup, onAuthStateChanged, signOut };
+    </script>
     
     <!-- Link to external CSS -->
     <link rel="stylesheet" href="style.css">
@@ -28,12 +49,10 @@
         <div class="login-box">
             <i class="fa-solid fa-heart-pulse login-logo"></i>
             <h2 style="font-family: var(--font-heading); color: var(--neon-cyan); margin-bottom: 10px; font-size: 1.8rem; font-weight: 700;">Vitalis AI</h2>
-            <p style="color: var(--text-primary); margin-bottom: 24px; font-size: 0.95rem; line-height: 1.5;">Please enter your name and securely authenticate to access your dashboard.</p>
+            <p style="color: var(--text-primary); margin-bottom: 24px; font-size: 0.95rem; line-height: 1.5;">Please securely authenticate to access your dashboard.</p>
             
-            <input type="text" id="custom-name-input" class="login-input" placeholder="Enter your name (optional)" autocomplete="off">
-
-            <button class="login-btn" id="puter-signin-btn">
-                <i class="fa-solid fa-shield-halved"></i> Sign in with Puter
+            <button class="login-btn" id="google-signin-btn" style="background: #ffffff; color: #444444; border: 1px solid #dddddd;">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" style="width: 20px; height: 20px; margin-right: 10px;"> Sign in with Google
             </button>
         </div>
     </div>
@@ -186,13 +205,23 @@
             <div class="sidebar-content">
 
                 <div class="card" id="user-profile-card" style="display: none; border-color: rgba(28, 93, 153, 0.5);">
-                    <h4><i class="fa-solid fa-circle-user" style="color: var(--neon-cyan);"></i> Patient Profile</h4>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                        <img id="display-user-photo" src="https://via.placeholder.com/40" alt="User Photo" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--neon-cyan);">
+                        <div>
+                            <h4 id="display-user-name" style="margin-bottom: 0; color: var(--text-primary); font-size: 1.1rem;">User Name</h4>
+                            <span id="display-user-email" style="font-size: 0.8rem; color: var(--text-muted);">user@example.com</span>
+                        </div>
+                    </div>
                     <div class="bio-stat">
-                        <span class="bio-stat-label"><i class="fa-solid fa-id-badge"></i> Name</span>
-                        <span class="bio-stat-value" id="display-user-name" style="color: var(--text-primary); font-size: 0.95rem;">...</span>
+                        <span class="bio-stat-label"><i class="fa-solid fa-calendar-days"></i> Age</span>
+                        <span class="bio-stat-value" id="display-user-age" style="color: var(--text-primary);">...</span>
+                    </div>
+                    <div class="bio-stat">
+                        <span class="bio-stat-label"><i class="fa-solid fa-venus-mars"></i> Gender</span>
+                        <span class="bio-stat-value" id="display-user-gender" style="color: var(--text-primary); text-transform: capitalize;">...</span>
                     </div>
                     <div class="bio-stat" style="border: none; padding-top: 14px;">
-                        <button id="puter-signout-btn" class="quick-prompt-btn" style="color: #FA824C; border-color: rgba(250, 130, 76, 0.4); background: rgba(250, 130, 76, 0.1); justify-content: center; margin-bottom: 0;">
+                        <button id="google-signout-btn" class="quick-prompt-btn" style="color: #FA824C; border-color: rgba(250, 130, 76, 0.4); background: rgba(250, 130, 76, 0.1); justify-content: center; margin-bottom: 0;">
                             <i class="fa-solid fa-right-from-bracket" style="color: #FA824C;"></i> Sign Out
                         </button>
                     </div>
@@ -261,6 +290,31 @@
         </div>
     </div>
 
+    <div id="onboarding-modal" class="modal-overlay">
+        <div class="modal-content text-center">
+            <h3><i class="fa-solid fa-user-plus"></i> Complete Your Profile</h3>
+            <p class="text-sm" style="margin-bottom: 20px;">We need a few more details to personalize your health assistance.</p>
+            <div style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <div>
+                    <label style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Age</label>
+                    <input type="number" id="onboarding-age" class="login-input" placeholder="e.g. 28" min="1" max="120" style="margin-bottom: 0;">
+                </div>
+                <div>
+                    <label style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Gender</label>
+                    <select id="onboarding-gender" class="login-input" style="margin-bottom: 0;">
+                        <option value="" disabled selected>Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                        <option value="prefer_not_to_say">Prefer not to say</option>
+                    </select>
+                </div>
+                <button id="save-onboarding-btn" class="login-btn" style="margin-top: 10px;">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Details
+                </button>
+            </div>
+        </div>
+    </div>
     <div id="toast" class="toast"></div>
 
     <!-- Link to external JavaScript -->

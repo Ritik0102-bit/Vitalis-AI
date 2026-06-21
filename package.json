@@ -1,0 +1,10 @@
+{
+  "name": "vitalis-ai",
+  "version": "1.0.0",
+  "description": "Vitalis AI - Health Assistant",
+  "main": "index.js",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "pg": "^8.12.0"
+  }
+}
