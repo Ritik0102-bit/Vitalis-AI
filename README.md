@@ -28,9 +28,10 @@ Vitalis AI is a clinical-grade, modern healthcare chatbot designed to help users
 ## ✨ Core Features
 
 *   🔐 **Secure Authentication:** Google Sign-In powered by Firebase Authentication.
-*   🗄️ **User Demographics Data:** Saves and retrieves user profiles (Age, Gender) using NeonDB (Serverless PostgreSQL).
+*   🗄️ **Persistent Data & Chat History:** Saves user profiles and full chat histories using NeonDB (Serverless PostgreSQL).
 *   🧠 **Custom Healthcare AI:** Powered by a fine-tuned Llama-3 8B model (trained via Unsloth on the ChatDoctor dataset).
 *   ☁️ **Serverless Inference:** AI model compressed to GGUF format and hosted 24/7 on Hugging Face Spaces via FastAPI.
+*   🗂️ **Chat Sessions Management:** Start new consultations, view past history, and rename or delete previous chat sessions.
 *   🧍 **Interactive Body Map:** Pinpoint exactly where it hurts using a clickable SVG human anatomy map.
 *   🌡️ **Dynamic Pain Scale:** Log symptom severity with a visual 1-10 slider featuring animated emoji feedback.
 *   💬 **Smart Suggestion Chips:** Context-aware follow-up questions generated to guide the conversation.
@@ -67,7 +68,11 @@ Vitalis-AI/
 ├── api/                 # Vercel Serverless Functions (Node.js/Postgres/Fetch)
 │   ├── chat.js          # Proxies chat requests to Hugging Face Space
 │   ├── getUser.js       # Fetches user demographics from NeonDB
-│   └── saveUser.js      # Saves new Google Auth users into NeonDB
+│   ├── saveUser.js      # Saves new Google Auth users into NeonDB
+│   ├── getHistory.js    # Fetches past chat sessions and messages
+│   ├── saveMessage.js   # Saves chat messages with session IDs
+│   ├── renameChat.js    # Renames an existing chat session
+│   └── deleteChat.js    # Deletes an entire chat session
 ├── assets/              # Logos, demo GIFs, and screenshot images
 ├── index.html           # Main UI dashboard and modal layouts
 ├── script.js            # Core frontend logic, Firebase Auth, and DOM interactions
@@ -118,6 +123,7 @@ vercel --prod
 *   **Onboarding:** Enter your Age and Gender upon first login (saved to NeonDB).
 *   **Describe Symptoms:** Type your symptoms into the chat box, or click the Microphone icon to dictate them.
 *   **Visual Tools:** Click the Child Icon for the Body Map or the Thermometer for the pain scale.
+*   **Manage Chat Sessions:** Click on past consultations from the left sidebar to resume them. You can easily rename or delete old sessions by hovering over them.
 *   **Interact:** Receive hyper-accurate, medical-focused responses generated directly from your Custom Llama-3 AI server.
 
 ---
