@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./assets/vitalis.png" alt="Vitalis AI Banner" width="100%" />
+  <img src="./assets/vitalis.png" alt="Vitalis AI Banner" width="100%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
   
   # 🧬 Vitalis AI
   
@@ -15,54 +15,69 @@
 
 Vitalis AI is a clinical-grade, modern healthcare chatbot designed to help users analyze symptoms, interact with medical reports, and receive immediate, AI-driven health insights. Built with a premium glassmorphism UI, it is powered by a custom-trained Llama-3 model specifically fine-tuned on the ChatDoctor dataset, providing highly accurate and empathetic medical advice.
 
-🚀 **Live Demo:** [Available via Vercel Deployment]
+---
+
+## 📑 Table of Contents
+- [📸 Dashboard Preview](#-dashboard-preview)
+- [✨ Core Features](#-core-features)
+- [🛠️ Tech Stack & Architecture](#️-tech-stack--architecture)
+- [📂 Project Structure](#-project-structure)
+- [🚀 Installation & Setup](#-installation--setup)
+- [💡 Usage Guide](#-usage-guide)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
 
 ---
 
 ## 📸 Dashboard Preview
 
-![App Screenshot](./assets/screenshot.png)  
+<div align="center">
+  <img src="./assets/screenshot.png" alt="App Screenshot" width="800" style="border-radius: 8px; border: 1px solid #ddd;" />
+</div>
 
 ---
 
 ## ✨ Core Features
 
-*   🔐 **Secure Authentication:** Google Sign-In powered by Firebase Authentication.
-*   🗄️ **Persistent Data & Chat History:** Saves user profiles and full chat histories using NeonDB (Serverless PostgreSQL).
-*   🧠 **Custom Healthcare AI:** Powered by a fine-tuned Llama-3 8B model (trained via Unsloth on the ChatDoctor dataset).
-*   ☁️ **Serverless Inference:** AI model compressed to GGUF format and hosted 24/7 on Hugging Face Spaces via FastAPI.
-*   🗂️ **Chat Sessions Management:** Start new consultations, view past history, and rename or delete previous chat sessions.
-*   🧍 **Interactive Body Map:** Pinpoint exactly where it hurts using a clickable SVG human anatomy map.
-*   🌡️ **Dynamic Pain Scale:** Log symptom severity with a visual 1-10 slider featuring animated emoji feedback.
-*   💬 **Smart Suggestion Chips:** Context-aware follow-up questions generated to guide the conversation.
-*   🎤 **Voice Input:** Speak directly to the AI for a hands-free diagnostic experience using the Web Speech API.
-*   ⚡ **Quick Action Prompts:** Instantly analyze common issues (Headache, Fever, Cold, etc.) with a single click.
-*   🌍 **Multilingual Support:** Chat seamlessly in English, Spanish, French, Hindi, Chinese, or Arabic.
-*   🌓 **Dynamic Theme:** Beautiful dark mode (Carbon Black) and a sleek light mode (Porcelain Base) with smooth CSS transitions.
-*   🖨️ **Export Session:** Download your entire diagnostic session as a clean, formatted PDF for personal records.
+| Feature | Description |
+| :--- | :--- |
+| 🔐 **Secure Authentication** | Google Sign-In powered by Firebase Authentication for seamless onboarding. |
+| 🗄️ **Persistent Data** | Saves user profiles and demographic data using NeonDB (Serverless PostgreSQL). |
+| 🗂️ **Session Management** | Start new consultations, view past history, and rename/delete previous chat sessions. |
+| 🧠 **Custom Healthcare AI** | Powered by a fine-tuned Llama-3 8B model (trained via Unsloth on the ChatDoctor dataset). |
+| ☁️ **Serverless Inference** | AI model compressed to GGUF format and hosted 24/7 on Hugging Face Spaces via FastAPI. |
+| 🧍 **Interactive Body Map** | Pinpoint exactly where it hurts using a clickable SVG human anatomy map. |
+| 🌡️ **Dynamic Pain Scale** | Log symptom severity with a visual 1-10 slider featuring animated emoji feedback. |
+| 💬 **Smart Suggestions** | Context-aware follow-up questions generated to guide the conversation. |
+| 🎤 **Voice Input** | Speak directly to the AI for a hands-free diagnostic experience using the Web Speech API. |
+| ⚡ **Quick Prompts** | Instantly analyze common issues (Headache, Fever, Cold, etc.) with a single click. |
+| 🌍 **Multilingual Support** | Chat seamlessly in English, Spanish, French, Hindi, Chinese, or Arabic. |
+| 🌓 **Dynamic Theme** | Beautiful dark mode (Carbon Black) and sleek light mode (Porcelain Base) with smooth CSS transitions. |
+| 🖨️ **Export Session** | Download your entire diagnostic session as a clean, formatted PDF for personal records. |
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack & Architecture
 
-**Frontend Architecture:**
-*   **HTML5 & CSS3:** Semantic markup, CSS Custom Properties (Variables), Glassmorphism, and advanced keyframe animations.
-*   **Vanilla JavaScript (ES6+):** Modular DOM manipulation, asynchronous API handling, and event-driven architecture.
-*   **Firebase:** Google OAuth Authentication.
+### **Frontend**
+- **HTML5 & CSS3:** Semantic markup, CSS Custom Properties, Glassmorphism aesthetics, and keyframe animations.
+- **Vanilla JavaScript (ES6+):** Modular DOM manipulation, asynchronous API handling, and event-driven architecture.
+- **Firebase:** Google OAuth Authentication logic.
 
-**Backend & API:**
-*   **Vercel Serverless Functions:** Node.js API routes (`/api/chat`, `/api/saveUser`, `/api/getUser`).
-*   **NeonDB:** Serverless PostgreSQL database for persistent user data storage.
+### **Backend & APIs**
+- **Vercel Serverless Functions:** Node.js API routes handling business logic (`/api/chat`, `/api/getHistory`, etc.).
+- **NeonDB:** Serverless PostgreSQL database for persistent user data and chat session storage.
 
-**Artificial Intelligence:**
-*   **Base Model:** Meta Llama-3 (8 Billion Parameters).
-*   **Training & Fine-tuning:** LoRA fine-tuning using Unsloth & Google Colab on the Hugging Face `ChatDoctor` dataset.
-*   **Inference Engine:** `llama.cpp` (GGUF compression).
-*   **AI Hosting:** Hugging Face Spaces (Docker, FastAPI, Uvicorn) for a free, 24/7 endpoint.
+### **Artificial Intelligence Engine**
+- **Base Model:** Meta Llama-3 (8 Billion Parameters).
+- **Fine-tuning:** LoRA fine-tuning using Unsloth & Google Colab on the Hugging Face `ChatDoctor` dataset.
+- **Inference:** `llama.cpp` (GGUF compression) hosted via FastAPI and Uvicorn.
+- **AI Hosting:** Hugging Face Spaces (Docker environment) for a free, 24/7 endpoint.
 
 ---
 
 ## 📂 Project Structure
+
 ```text
 Vitalis-AI/
 ├── api/                 # Vercel Serverless Functions (Node.js/Postgres/Fetch)
@@ -86,7 +101,7 @@ Vitalis-AI/
 
 ## 🚀 Installation & Setup
 
-### 1. Clone the repository
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/Ritik0102-bit/Vitalis-AI.git
 cd Vitalis-AI
@@ -99,38 +114,39 @@ Create a `.env` file in the root directory and add your credentials:
 DATABASE_URL="postgresql://<user>:<password>@<neon-host>/neondb?sslmode=require"
 CUSTOM_LLM_URL="https://your-huggingface-space.hf.space/chat"
 ```
-*(Also ensure your Firebase config keys are updated in `index.html`).*
+*(Ensure your Firebase configuration keys are updated in `index.html`).*
 
 ### 3. Run Locally (Vercel Dev)
-Because this project uses Serverless APIs, you must run it using the Vercel CLI:
+Because this project utilizes Serverless APIs, you must run it using the Vercel CLI:
 ```bash
 npm i -g vercel
 vercel dev
 ```
-The app will be available at `http://localhost:3000`.
+The application will now be available at `http://localhost:3000`.
 
 ### 4. Deploy to Production
 To deploy your application publicly:
 ```bash
 vercel --prod
 ```
-*Make sure to add your Environment Variables to the Vercel Dashboard, and whitelist your new Vercel domain in your Firebase Auth settings!*
+*Note: Make sure to add your Environment Variables to the Vercel Dashboard, and whitelist your new Vercel domain in your Firebase Auth settings!*
 
 ---
 
 ## 💡 Usage Guide
-*   **Sign In:** Authenticate securely using the Google Sign-In popup.
-*   **Onboarding:** Enter your Age and Gender upon first login (saved to NeonDB).
-*   **Describe Symptoms:** Type your symptoms into the chat box, or click the Microphone icon to dictate them.
-*   **Visual Tools:** Click the Child Icon for the Body Map or the Thermometer for the pain scale.
-*   **Manage Chat Sessions:** Click on past consultations from the left sidebar to resume them. You can easily rename or delete old sessions by hovering over them.
-*   **Interact:** Receive hyper-accurate, medical-focused responses generated directly from your Custom Llama-3 AI server.
+
+1. **Sign In:** Authenticate securely using the Google Sign-In popup.
+2. **Onboarding:** Enter your Age and Gender upon your first login.
+3. **Describe Symptoms:** Type your symptoms into the chat box, click the Microphone icon to dictate them, or use the Quick Action Prompts.
+4. **Visual Tools:** Utilize the Child Icon for the Body Map or the Thermometer for the pain scale.
+5. **Manage Consultations:** Navigate between past sessions using the left sidebar. Hover over any past session to rename or delete it.
+6. **Interact:** Receive hyper-accurate, empathetic medical responses generated directly from the Custom Llama-3 AI server.
 
 ---
 
 ## 🤝 Contributing
-Contributions, issues, and feature requests are welcome!
-Feel free to check out the issues page.
+
+Contributions, issues, and feature requests are highly appreciated! Feel free to check out the [issues page](https://github.com/Ritik0102-bit/Vitalis-AI/issues).
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -138,9 +154,20 @@ Feel free to check out the issues page.
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+---
+
 ## 📄 License
+
 Distributed under the MIT License. See `LICENSE` for more information.
 
+---
+
 ## ✍️ Author
+
 **Ritik Rana**
 * GitHub: [@Ritik0102-bit](https://github.com/Ritik0102-bit)
+
+---
+<div align="center">
+  <sub>Built with ❤️ by Ritik Rana</sub>
+</div>
