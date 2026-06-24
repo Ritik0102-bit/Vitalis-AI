@@ -11,9 +11,13 @@
   ![License](https://img.shields.io/github/license/Ritik0102-bit/Vitalis-AI?style=for-the-badge)
 </div>
 
-<br />
+## 📖 About Vitalis AI
 
-Vitalis AI is a clinical-grade, modern healthcare chatbot designed to help users analyze symptoms, interact with medical reports, and receive immediate, AI-driven health insights. Built with a premium glassmorphism UI, it is powered by a custom-trained Llama-3 model specifically fine-tuned on the ChatDoctor dataset, providing highly accurate and empathetic medical advice.
+**Vitalis AI** is a next-generation, clinical-grade healthcare chatbot designed to democratize access to medical information. Traditional healthcare can often be slow and inaccessible, leaving patients anxious while waiting for basic symptom analysis. Vitalis AI bridges this gap by providing immediate, highly accurate, and empathetic medical insights directly from your browser. 
+
+Built with a stunning, responsive **glassmorphism UI**, the application feels premium, intuitive, and deeply interactive. Under the hood, the brain of Vitalis is powered by a **custom fine-tuned Llama-3 (8B) Large Language Model**. By specifically training the model on the comprehensive *ChatDoctor* dataset using cutting-edge Unsloth optimization techniques, Vitalis transcends generic AI responses. It acts as a specialized medical assistant capable of interpreting symptoms, asking dynamic follow-up questions, supporting multiple languages in real-time, and generating personalized daily health tips.
+
+Whether you are logging a minor headache using our interactive human body map, uploading clinical images for context, or exporting a diagnostic session as a PDF for your doctor, Vitalis AI is engineered to be the ultimate personal health hub.
 
 ---
 
