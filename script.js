@@ -186,12 +186,72 @@ document.addEventListener("DOMContentLoaded", () => {
             if (session.session_id === currentSessionId) item.classList.add("active");
             
             const date = new Date(session.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            const title = session.title || "New Consultation";
             
             item.innerHTML = `
-                <div class="session-title">${session.title || "New Consultation"}</div>
-                <div class="session-date">${date}</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div style="flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 4px;">
+                        <div class="session-title">${title}</div>
+                        <div class="session-date">${date}</div>
+                    </div>
+                    <div class="session-actions" onclick="event.stopPropagation();">
+                        <button class="session-action-btn edit-btn" title="Rename Session"><i class="fa-solid fa-pen"></i></button>
+                        <button class="session-action-btn delete-btn" title="Delete Session"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
             `;
             
+            // Delete Logic
+            const deleteBtn = item.querySelector('.delete-btn');
+            deleteBtn.addEventListener("click", async (e) => {
+                e.stopPropagation();
+                if (!confirm("Are you sure you want to delete this chat session?")) return;
+                try {
+                    await fetch('/api/deleteChat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_id: currentUser.uid, session_id: session.session_id })
+                    });
+                    if (session.session_id === currentSessionId) startNewSession();
+                    loadChatHistory(currentUser);
+                } catch (err) { console.error(err); }
+            });
+
+            // Rename Logic
+            const editBtn = item.querySelector('.edit-btn');
+            const titleDiv = item.querySelector('.session-title');
+            editBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const input = document.createElement("input");
+                input.className = "session-title-input";
+                input.value = title;
+                titleDiv.replaceWith(input);
+                input.focus();
+
+                const saveRename = async () => {
+                    const newName = input.value.trim();
+                    if (newName && newName !== title) {
+                        try {
+                            await fetch('/api/renameChat', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ user_id: currentUser.uid, session_id: session.session_id, session_name: newName })
+                            });
+                        } catch (err) { console.error(err); }
+                    }
+                    loadChatHistory(currentUser);
+                };
+
+                input.addEventListener("blur", saveRename);
+                input.addEventListener("keypress", (ev) => {
+                    if (ev.key === "Enter") {
+                        ev.preventDefault();
+                        input.blur();
+                    }
+                });
+                input.addEventListener("click", ev => ev.stopPropagation());
+            });
+
             item.addEventListener("click", () => {
                 document.querySelectorAll(".session-item").forEach(el => el.classList.remove("active"));
                 item.classList.add("active");

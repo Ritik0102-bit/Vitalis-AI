@@ -34,21 +34,36 @@ module.exports = async (req, res) => {
     // Ensure session_id column exists for old tables
     await client.query(`ALTER TABLE messages ADD COLUMN IF NOT EXISTS session_id VARCHAR(255);`);
 
+    // Ensure session_name column exists for renaming feature
+    await client.query(`ALTER TABLE messages ADD COLUMN IF NOT EXISTS session_name VARCHAR(255);`);
+
     if (session_id) {
-      // Fetch messages for a specific session
-      const result = await client.query(
-        'SELECT * FROM messages WHERE user_id = $1 AND session_id = $2 ORDER BY created_at ASC', 
-        [user_id, session_id]
-      );
+      let result;
+      if (session_id === 'legacy_null') {
+        // Fetch messages for legacy session
+        result = await client.query(
+          'SELECT * FROM messages WHERE user_id = $1 AND session_id IS NULL ORDER BY created_at ASC', 
+          [user_id]
+        );
+      } else {
+        // Fetch messages for a specific session
+        result = await client.query(
+          'SELECT * FROM messages WHERE user_id = $1 AND session_id = $2 ORDER BY created_at ASC', 
+          [user_id, session_id]
+        );
+      }
       client.release();
       res.status(200).json(result.rows);
     } else {
-      // Fetch list of sessions (unique session_ids, using the first user message as title)
+      // Fetch list of sessions (unique session_ids)
       const query = `
-        SELECT DISTINCT ON (session_id) session_id, text as title, created_at
+        SELECT DISTINCT ON (COALESCE(session_id, 'legacy_null')) 
+          COALESCE(session_id, 'legacy_null') as session_id, 
+          COALESCE(session_name, text) as title, 
+          created_at
         FROM messages
         WHERE user_id = $1 AND sender = 'user'
-        ORDER BY session_id, created_at ASC
+        ORDER BY COALESCE(session_id, 'legacy_null'), created_at ASC
       `;
       const result = await client.query(query, [user_id]);
       client.release();

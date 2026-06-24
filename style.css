@@ -341,8 +341,15 @@ body.light-theme .session-item { background: rgba(250, 255, 253, 0.5); color: va
 body.light-theme .session-item:hover { background: rgba(60, 145, 230, 0.1); border-color: rgba(60, 145, 230, 0.3); }
 .session-item.active { background: rgba(28, 93, 153, 0.2); border-color: var(--neon-cyan); color: var(--neon-cyan); font-weight: bold; }
 body.light-theme .session-item.active { background: rgba(60, 145, 230, 0.15); border-color: var(--neon-purple); color: var(--neon-purple); }
-.session-title { font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.session-title { font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.session-title-input { font-size: 0.9rem; background: rgba(0,0,0,0.2); border: 1px solid var(--neon-cyan); color: #fff; padding: 2px 4px; border-radius: 4px; outline: none; width: 100%; }
+body.light-theme .session-title-input { background: #fff; color: #000; border-color: var(--neon-purple); }
 .session-date { font-size: 0.7rem; color: var(--text-muted); }
+.session-actions { display: flex; gap: 8px; opacity: 0; transition: opacity 0.2s ease; margin-top: 4px; }
+.session-item:hover .session-actions, .session-item.active .session-actions { opacity: 1; }
+.session-action-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: color 0.2s ease; font-size: 0.85rem; }
+.session-action-btn:hover { color: var(--neon-cyan); }
+.session-action-btn.delete-btn:hover { color: #FA824C; }
 
 /* =========================================================================
    CENTER CHAT CONTAINER
@@ -424,7 +431,7 @@ body.light-theme .close-sidebar-btn:hover { background: rgba(250, 130, 76, 0.2);
 .chat-messages::-webkit-scrollbar-track { background: transparent; }
 .chat-messages::-webkit-scrollbar-thumb { background: rgba(99, 159, 171, 0.3); border-radius: 10px; }
 body.light-theme .chat-messages::-webkit-scrollbar-thumb { background: rgba(60, 145, 230, 0.2); }
-.empty-state { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 18px; width: 80%; pointer-events: none; transition: opacity 0.4s ease; }
+.empty-state { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 18px; width: 80%; transition: opacity 0.4s ease; }
 .empty-state > i { font-size: 4rem; color: var(--neon-cyan); filter: drop-shadow(0 0 25px rgba(99, 159, 171, 0.6)); animation: heartbeat 2s ease-in-out infinite; }
 body.light-theme .empty-state > i { filter: drop-shadow(0 0 15px rgba(60, 145, 230, 0.2)); color: var(--neon-purple); }
 .empty-state h3 { font-family: var(--font-heading); font-size: 1.6rem; color: var(--text-primary); font-weight: 700; }
