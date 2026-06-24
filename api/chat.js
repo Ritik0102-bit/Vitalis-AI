@@ -15,11 +15,37 @@ module.exports = async (req, res) => {
     });
   }
 
-  try {
-    let finalInput = message;
-    if (language && language !== "English") {
-      finalInput = `Respond EXCLUSIVELY in ${language}. ` + message;
+  const langMap = {
+    "English": "en",
+    "Spanish": "es",
+    "French": "fr",
+    "Hindi": "hi",
+    "Chinese": "zh-CN",
+    "Arabic": "ar"
+  };
+  
+  const targetCode = langMap[language] || "en";
+
+  // Free, fast translation helper using Google Translate API endpoint
+  async function translateText(text, sourceCode, targetCode) {
+    if (!text || sourceCode === targetCode) return text;
+    try {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceCode}&tl=${targetCode}&dt=t&q=${encodeURIComponent(text)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      return data[0].map(x => x[0]).join('');
+    } catch (e) {
+      console.error("Translation error:", e);
+      return text;
     }
+  }
+
+  try {
+    // 1. Translate user message to English for the LLM
+    let englishInput = await translateText(message, targetCode, "en");
+    
+    // Explicitly force LLM to respond in English
+    let finalInput = `Respond EXCLUSIVELY in English. ` + englishInput;
 
     // Call your own custom LLM API (e.g. RunPod / Hugging Face endpoint)
     const response = await fetch(CUSTOM_LLM_URL, {
@@ -30,7 +56,7 @@ module.exports = async (req, res) => {
       },
       body: JSON.stringify({ 
         input: finalInput, 
-        language: language,
+        language: "English", // We handle translation manually now
         image: image,
         history: history || []
       })
@@ -51,8 +77,11 @@ module.exports = async (req, res) => {
       finalOutput = finalOutput.replace(/Chat Doctor/gi, "Vitalis AI");
       finalOutput = finalOutput.replace(/ChatDoctor/gi, "Vitalis AI");
     }
+
+    // 2. Translate LLM English response back to user's selected language
+    let translatedOutput = await translateText(finalOutput, "en", targetCode);
     
-    res.status(200).json({ response: finalOutput });
+    res.status(200).json({ response: translatedOutput });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to connect to Custom LLM' });
