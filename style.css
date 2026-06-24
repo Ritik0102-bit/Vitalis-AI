@@ -147,7 +147,8 @@ body.light-theme {
 body.light-theme .chat-main,
 body.light-theme .left-sidebar,
 body.light-theme .right-panel,
-body.light-theme .card {
+body.light-theme .card,
+body.light-theme .modal-content {
     background: #FFFFFF !important;
     border: 1px solid rgba(0, 0, 0, 0.08) !important;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06) !important;
@@ -1598,6 +1599,76 @@ body.light-theme .chat-input-container {
     transform: scale(1) translateY(0);
 }
 
+/* Modal Internal Forms */
+.modal-subtitle {
+    margin-bottom: 24px;
+    color: var(--text-2);
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-2);
+    margin-left: 4px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: var(--r-md);
+    background: var(--bg-input);
+    border: 1px solid var(--b-1);
+    color: var(--text-0);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    transition: all 0.3s var(--ease-spring);
+    outline: none;
+}
+
+.form-input:focus {
+    border-color: var(--violet);
+    box-shadow: 0 0 0 3px var(--violet-dim);
+    background: var(--bg-glass-h);
+}
+
+body.light-theme .form-input {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    color: #0F172A;
+}
+
+body.light-theme .form-input:focus {
+    background: #FFFFFF;
+    border-color: #0EA5E9;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+body.light-theme .modal-content h3 {
+    color: #0F172A;
+}
+
+body.light-theme .form-group label,
+body.light-theme .modal-subtitle {
+    color: #64748B;
+}
+
+.modal-submit-btn {
+    margin-top: 12px;
+}
+
 .modal-content h3 {
     font-family: var(--font-heading);
     font-size: 1.1rem;
@@ -1814,4 +1885,35 @@ input[type=range]::-webkit-slider-thumb:hover {
     .lang-select {
         display: none;
     }
+}
+
+/* ── 16. TYPING INDICATOR ────────────────────────────────────── */
+.typing-indicator {
+    padding: 16px 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    min-height: 24px;
+}
+.dna-loader {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+.dna-loader span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--violet-l);
+    animation: typingPulse 1.4s infinite ease-in-out both;
+}
+.dna-loader span:nth-child(1) { animation-delay: -0.32s; }
+.dna-loader span:nth-child(2) { animation-delay: -0.16s; background: var(--cyan-l); }
+.dna-loader span:nth-child(3) { animation-delay: 0s; background: var(--violet-l); }
+.dna-loader span:nth-child(4) { animation-delay: 0.16s; background: var(--cyan-l); }
+
+@keyframes typingPulse {
+    0%, 80%, 100% { transform: scale(0.3); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; box-shadow: 0 0 10px var(--violet-l); }
 }

@@ -16,6 +16,11 @@ module.exports = async (req, res) => {
   }
 
   try {
+    let finalInput = message;
+    if (language && language !== "English") {
+      finalInput = `Respond EXCLUSIVELY in ${language}. ` + message;
+    }
+
     // Call your own custom LLM API (e.g. RunPod / Hugging Face endpoint)
     const response = await fetch(CUSTOM_LLM_URL, {
       method: 'POST',
@@ -24,7 +29,7 @@ module.exports = async (req, res) => {
         'Authorization': `Bearer ${process.env.CUSTOM_LLM_API_KEY}` // If you set one up
       },
       body: JSON.stringify({ 
-        input: message, 
+        input: finalInput, 
         language: language,
         image: image,
         history: history || []
