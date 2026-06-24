@@ -7,7 +7,7 @@
     <meta name="description" content="AI Symptom Checker - A modern health assistant to analyze symptoms and reports.">
     
     <!-- External Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- External Libraries -->
@@ -20,44 +20,47 @@
 
         const firebaseConfig = {
             apiKey: "AIzaSyDJ4FrgCf8UGOARS3bxgffAzk6qwWufRgI",
-  authDomain: "vitalis-ai-90b46.firebaseapp.com",
-  projectId: "vitalis-ai-90b46",
-  storageBucket: "vitalis-ai-90b46.firebasestorage.app",
-  messagingSenderId: "959531836387",
-  appId: "1:959531836387:web:3f1d491df65d14c05776d6",
-  measurementId: "G-CWEDD4L64G"
+            authDomain: "vitalis-ai-90b46.firebaseapp.com",
+            projectId: "vitalis-ai-90b46",
+            storageBucket: "vitalis-ai-90b46.firebasestorage.app",
+            messagingSenderId: "959531836387",
+            appId: "1:959531836387:web:3f1d491df65d14c05776d6",
+            measurementId: "G-CWEDD4L64G"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
-
         window.firebaseAuth = { auth, provider, signInWithPopup, onAuthStateChanged, signOut };
     </script>
     
-    <!-- Link to external CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="light-theme">
 
-    <!-- LOGIN SCREEN -->
+    <!-- ═══════════════════════════════════════════════════════
+         LOGIN SCREEN
+    ═══════════════════════════════════════════════════════ -->
     <div class="login-screen" id="login-screen" style="display: none;">
         <div class="bg-canvas">
             <div class="cellular-pattern"></div>
             <div class="vignette"></div>
         </div>
         <div class="login-box">
-            <i class="fa-solid fa-heart-pulse login-logo"></i>
-            <h2 style="font-family: var(--font-heading); color: var(--neon-cyan); margin-bottom: 10px; font-size: 1.8rem; font-weight: 700;">Vitalis AI</h2>
-            <p style="color: var(--text-primary); margin-bottom: 24px; font-size: 0.95rem; line-height: 1.5;">Please securely authenticate to access your dashboard.</p>
-            
-            <button class="login-btn" id="google-signin-btn" style="background: #ffffff; color: #444444; border: 1px solid #dddddd;">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" style="width: 20px; height: 20px; margin-right: 10px;"> Sign in with Google
+            <div class="login-logo-ring">
+                <i class="fa-solid fa-heart-pulse login-logo"></i>
+            </div>
+            <h2 class="login-title">Vitalis AI</h2>
+            <p class="login-subtitle">Your intelligent health companion. Sign in to get started.</p>
+            <button class="login-btn" id="google-signin-btn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:20px;height:20px;margin-right:10px;"> Sign in with Google
             </button>
         </div>
     </div>
 
-    <!-- BACKGROUND ANIMATIONS -->
+    <!-- ═══════════════════════════════════════════════════════
+         ANIMATED BACKGROUND
+    ═══════════════════════════════════════════════════════ -->
     <div class="bg-canvas">
         <div class="cellular-pattern"></div>
         <div class="bg-mesh"></div>
@@ -67,196 +70,254 @@
         <div class="orb orb-3"></div>
         <div class="vignette"></div>
     </div>
-
-    <!-- HUD ELEMENTS -->
     <div class="floating-bg">
         <div class="hud-ring hud-ring-1"></div>
         <div class="hud-ring hud-ring-2"></div>
         <div class="hud-ring hud-ring-3"></div>
-
-        <i class="fa-solid fa-notes-medical float-item" style="top: 15%; left: 10%; animation-delay: 0s;"></i>
-        <i class="fa-solid fa-pills float-item" style="top: 70%; left: 85%; animation-delay: 2s; font-size: 3rem;"></i>
-        <i class="fa-solid fa-dna float-item" style="top: 40%; left: 85%; animation-delay: 4s; font-size: 5rem;"></i>
-        <i class="fa-solid fa-stethoscope float-item" style="top: 50%; left: 5%; animation-delay: 5s;"></i>
-        <i class="fa-solid fa-truck-medical float-item" style="top: 85%; left: 60%; animation-delay: 2.5s;"></i>
+        <i class="fa-solid fa-notes-medical float-item" style="top:15%;left:10%;animation-delay:0s;"></i>
+        <i class="fa-solid fa-pills float-item" style="top:70%;left:85%;animation-delay:2s;font-size:3rem;"></i>
+        <i class="fa-solid fa-dna float-item" style="top:40%;left:85%;animation-delay:4s;font-size:5rem;"></i>
+        <i class="fa-solid fa-stethoscope float-item" style="top:50%;left:5%;animation-delay:5s;"></i>
+        <i class="fa-solid fa-truck-medical float-item" style="top:85%;left:60%;animation-delay:2.5s;"></i>
     </div>
 
-    <!-- MAIN APP DASHBOARD -->
+    <!-- ═══════════════════════════════════════════════════════
+         MAIN APP — NEW LAYOUT
+    ═══════════════════════════════════════════════════════ -->
     <div class="app-wrapper" id="app-wrapper">
 
-        <div class="mobile-overlay" id="mobile-overlay"></div>
-
-        <!-- LEFT SIDEBAR -->
-        <aside class="sidebar left-sidebar" id="left-sidebar">
-            <div class="sidebar-header">
-                <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
-                <button class="close-sidebar-btn" id="close-sidebar-btn" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="sidebar-content">
-
-                <button id="new-chat-btn" class="quick-prompt-btn" style="background: var(--neon-cyan); color: white; justify-content: center; margin-bottom: 20px; border: none; font-weight: bold;">
-                    <i class="fa-solid fa-plus"></i> New Consultation
+        <!-- ── TOP NAVIGATION BAR ── -->
+        <header class="app-header">
+            <div class="header-brand">
+                <!-- hamburger → toggles left sidebar drawer -->
+                <button class="menu-btn" id="sidebar-toggle" title="Open Navigation">
+                    <i class="fa-solid fa-bars"></i>
                 </button>
-
-                <div class="card" id="chat-history-card" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
-                    <h4><i class="fa-solid fa-clock-rotate-left"></i> Past Consultations</h4>
-                    <div id="session-list" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                        <!-- Sessions will load here -->
-                    </div>
+                <div class="brand-logo-wrap">
+                    <i class="fa-solid fa-heart-pulse brand-pulse"></i>
                 </div>
-                
-                <div class="card emergency-card">
-                    <h4><i class="fa-solid fa-phone-volume"></i> Emergency</h4>
-                    <p class="text-sm">In a life-threatening situation, immediately call local emergency services (e.g. 108 / 112).</p>
+                <div class="brand-text">
+                    <span class="brand-name">Vitalis AI</span>
                 </div>
             </div>
-        </aside>
 
-        <!-- CENTER CHAT INTERFACE -->
-        <main class="chat-container">
-            <div class="chat-header">
-                <div class="header-info">
-                    <div class="avatar-glow">
-                        <div class="avatar">
-                            <i class="fa-solid fa-heart-pulse" id="sidebar-toggle"></i>
+            <div class="header-actions">
+                <select id="language-select" class="lang-select" title="Select Chat Language">
+                    <option value="English">🇬🇧 EN</option>
+                    <option value="Spanish">🇪🇸 ES</option>
+                    <option value="French">🇫🇷 FR</option>
+                    <option value="Hindi">🇮🇳 HI</option>
+                    <option value="Chinese">🇨🇳 CN</option>
+                    <option value="Arabic">🇸🇦 AR</option>
+                </select>
+                <button id="theme-toggle" class="icon-btn" title="Toggle Theme"><i class="fa-solid fa-sun"></i></button>
+                <button id="download-pdf" class="icon-btn" title="Download PDF"><i class="fa-solid fa-file-pdf"></i></button>
+                <button id="clear-chat" class="icon-btn" title="Clear Session"><i class="fa-solid fa-eraser"></i></button>
+                <button id="info-panel-btn" class="icon-btn info-panel-btn" title="Toggle Info Panel"><i class="fa-solid fa-circle-user"></i></button>
+            </div>
+        </header>
+
+        <!-- ── APP BODY (below header) ── -->
+        <div class="app-body">
+
+            <!-- Overlay for drawers -->
+            <div class="mobile-overlay" id="mobile-overlay"></div>
+
+            <!-- ── LEFT DRAWER: History & Quick Actions ── -->
+            <aside class="left-sidebar" id="left-sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
+                    <button class="close-sidebar-btn" id="close-sidebar-btn" style="display:none;">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="sidebar-content">
+
+                    <button id="new-chat-btn" class="new-chat-btn">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>New Consultation</span>
+                    </button>
+
+                    <div class="history-section card" id="chat-history-card" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
+                        <h4><i class="fa-solid fa-clock-rotate-left"></i> Past Consultations</h4>
+                        <div id="session-list" style="display:flex;flex-direction:column;gap:6px;margin-top:10px;"></div>
+                    </div>
+
+                    <div class="card emergency-card">
+                        <h4><i class="fa-solid fa-phone-volume"></i> Emergency</h4>
+                        <p class="text-sm">In a life-threatening situation, immediately call local emergency services (e.g. 108 / 112).</p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ── CENTER: CHAT MAIN ── -->
+            <main class="chat-main">
+
+                <div class="chat-messages" id="chat-messages">
+
+                    <!-- EMPTY STATE with new grid layout -->
+                    <div class="empty-state" id="empty-state">
+                        <div class="empty-hero-icon">
+                            <i class="fa-solid fa-dna"></i>
+                        </div>
+                        <h3 class="empty-title">How can <span class="brand-highlight">Vitalis</span> help you today?</h3>
+                        <p class="empty-subtitle">Describe your symptoms, upload a lab report, or use the body map to isolate areas of discomfort.</p>
+
+                        <div class="prompt-grid">
+                            <button class="quick-prompt-btn prompt-card" data-text="I am experiencing a severe headache and fever.">
+                                <div class="prompt-card-icon vi">
+                                    <i class="fa-solid fa-head-side-virus"></i>
+                                </div>
+                                <div class="prompt-card-body">
+                                    <span class="prompt-card-title">Headache &amp; Fever</span>
+                                    <span class="prompt-card-desc">Analyze head pain &amp; temperature</span>
+                                </div>
+                            </button>
+                            <button class="quick-prompt-btn prompt-card" data-text="I have an upset stomach and feel nauseous.">
+                                <div class="prompt-card-icon cy">
+                                    <i class="fa-solid fa-virus"></i>
+                                </div>
+                                <div class="prompt-card-body">
+                                    <span class="prompt-card-title">Stomach Issues</span>
+                                    <span class="prompt-card-desc">Nausea, bloating &amp; digestion</span>
+                                </div>
+                            </button>
+                            <button class="quick-prompt-btn prompt-card" data-text="I have a sore throat, runny nose, and a persistent cough.">
+                                <div class="prompt-card-icon em">
+                                    <i class="fa-solid fa-lungs-virus"></i>
+                                </div>
+                                <div class="prompt-card-body">
+                                    <span class="prompt-card-title">Cold &amp; Cough</span>
+                                    <span class="prompt-card-desc">Throat, cough &amp; respiratory</span>
+                                </div>
+                            </button>
+                            <button class="quick-prompt-btn prompt-card" data-text="I have pain and aching in my joints and muscles.">
+                                <div class="prompt-card-icon am">
+                                    <i class="fa-solid fa-bone"></i>
+                                </div>
+                                <div class="prompt-card-body">
+                                    <span class="prompt-card-title">Joint / Muscle Pain</span>
+                                    <span class="prompt-card-desc">Aches, joints &amp; mobility</span>
+                                </div>
+                            </button>
+                            <button class="quick-prompt-btn prompt-card" data-text="I have developed a skin rash that is red and itchy.">
+                                <div class="prompt-card-icon ro">
+                                    <i class="fa-solid fa-hand-dots"></i>
+                                </div>
+                                <div class="prompt-card-body">
+                                    <span class="prompt-card-title">Skin Rash / Allergy</span>
+                                    <span class="prompt-card-desc">Rash, itching &amp; reactions</span>
+                                </div>
+                            </button>
+                            <button class="quick-prompt-btn prompt-card" data-text="I have been feeling unusually tired and fatigued lately.">
+                                <div class="prompt-card-icon vi">
+                                    <i class="fa-solid fa-battery-half"></i>
+                                </div>
+                                <div class="prompt-card-body">
+                                    <span class="prompt-card-title">Fatigue &amp; Tiredness</span>
+                                    <span class="prompt-card-desc">Exhaustion &amp; energy loss</span>
+                                </div>
+                            </button>
                         </div>
                     </div>
-                    <div>
-                        <h2>Vitalis AI</h2>
-                        <span class="status">System Online</span>
+
+                </div><!-- end chat-messages -->
+
+                <!-- Image preview -->
+                <div class="preview-container" id="preview-container" style="display:none;">
+                    <div class="preview-box">
+                        <img id="image-preview" src="" alt="Report Preview">
+                        <button id="remove-image" class="remove-btn" title="Remove"><i class="fa-solid fa-xmark"></i></button>
                     </div>
+                    <span class="preview-text"><i class="fa-solid fa-paperclip"></i> Attachment ready</span>
                 </div>
-                <div class="header-controls">
-                    <select id="language-select" class="lang-select" title="Select Chat Language">
-                        <option value="English">🇬🇧 EN</option>
-                        <option value="Spanish">🇪🇸 ES</option>
-                        <option value="French">🇫🇷 FR</option>
-                        <option value="Hindi">🇮🇳 HI</option>
-                        <option value="Chinese">🇨🇳 CN</option>
-                        <option value="Arabic">🇸🇦 AR</option>
-                    </select>
-                    <button id="theme-toggle" class="icon-btn" title="Toggle Light/Dark Mode"><i class="fa-solid fa-sun"></i></button>
-                    <button id="download-pdf" class="icon-btn" title="Download Session as PDF"><i class="fa-solid fa-file-pdf"></i></button>
-                    <button id="clear-chat" class="icon-btn" title="Clear Session"><i class="fa-solid fa-eraser"></i></button>
-                </div>
-            </div>
 
-            <div class="chat-messages" id="chat-messages">
-                <div class="empty-state" id="empty-state">
-                    <i class="fa-solid fa-dna"></i>
-                    <h3>How can Vitalis help you today?</h3>
-                    <p>Describe your symptoms, upload a lab report, or use the body map to isolate areas of discomfort. I am ready to analyze.</p>
-                    <div class="prompt-list-wrap" style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 600px;">
-                        <button class="quick-prompt-btn" data-text="I am experiencing a severe headache and fever.">
-                            <i class="fa-solid fa-head-side-virus"></i> Headache &amp; Fever
-                        </button>
-                        <button class="quick-prompt-btn" data-text="I have an upset stomach and feel nauseous.">
-                            <i class="fa-solid fa-virus"></i> Stomach Issues
-                        </button>
-                        <button class="quick-prompt-btn" data-text="I have a sore throat, runny nose, and a persistent cough.">
-                            <i class="fa-solid fa-lungs-virus"></i> Cold &amp; Cough
-                        </button>
-                        <button class="quick-prompt-btn" data-text="I have pain and aching in my joints and muscles.">
-                            <i class="fa-solid fa-bone"></i> Joint / Muscle Pain
-                        </button>
-                        <button class="quick-prompt-btn" data-text="I have developed a skin rash that is red and itchy.">
-                            <i class="fa-solid fa-hand-dots"></i> Skin Rash / Allergy
-                        </button>
+                <!-- Suggestion chips -->
+                <div id="suggestion-chips" class="suggestion-chips"></div>
+
+                <!-- Input bar -->
+                <div class="chat-input-container">
+                    <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp" style="display:none;">
+                    <div class="input-tools">
+                        <button id="upload-btn" class="action-btn" title="Upload Report"><i class="fa-solid fa-paperclip"></i></button>
+                        <button id="body-map-btn" class="action-btn" title="Body Map"><i class="fa-solid fa-child"></i></button>
+                        <button id="pain-btn" class="action-btn" title="Pain Scale"><i class="fa-solid fa-temperature-half"></i></button>
+                        <button id="mic-btn" class="action-btn" title="Voice Input"><i class="fa-solid fa-microphone"></i></button>
                     </div>
+                    <div class="input-field-wrap">
+                        <input type="text" id="user-input" placeholder="Describe your symptoms or ask a health question..." autocomplete="off">
+                    </div>
+                    <button id="send-btn" class="send-btn" title="Send"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
-            </div>
 
-            <div class="preview-container" id="preview-container" style="display: none;">
-                <div class="preview-box">
-                    <img id="image-preview" src="" alt="Report Preview">
-                    <button id="remove-image" class="remove-btn" title="Remove Attachment"><i class="fa-solid fa-xmark"></i></button>
+            </main><!-- end chat-main -->
+
+            <!-- ── RIGHT INFO PANEL ── -->
+            <aside class="right-panel" id="right-sidebar">
+                <div class="panel-header">
+                    <h3><i class="fa-solid fa-circle-info"></i> Your Health Hub</h3>
                 </div>
-                <span class="preview-text">Attachment ready</span>
-            </div>
+                <div class="panel-content sidebar-content">
 
-            <div id="suggestion-chips" class="suggestion-chips"></div>
-
-            <div class="chat-input-container">
-                <input type="file" id="file-input" accept="image/png, image/jpeg, image/webp" style="display: none;">
-                <button id="upload-btn" class="action-btn" title="Upload Report/Prescription"><i class="fa-solid fa-paperclip"></i></button>
-                <button id="body-map-btn" class="action-btn" title="Interactive Body Map"><i class="fa-solid fa-child"></i></button>
-                <button id="pain-btn" class="action-btn" title="Visual Pain Scale"><i class="fa-solid fa-temperature-half"></i></button>
-                <button id="mic-btn" class="action-btn" title="Voice Input"><i class="fa-solid fa-microphone"></i></button>
-                <input type="text" id="user-input" placeholder="Type or describe your symptoms..." autocomplete="off">
-                <button id="send-btn" class="send-btn" title="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
-            </div>
-        </main>
-
-        <!-- RIGHT SIDEBAR -->
-        <aside class="sidebar right-sidebar" id="right-sidebar">
-            <div class="sidebar-header">
-                <h3><i class="fa-solid fa-circle-info"></i> Information</h3>
-            </div>
-            <div class="sidebar-content">
-
-                <div class="card" id="user-profile-card" style="display: none; border-color: rgba(28, 93, 153, 0.5);">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                        <img id="display-user-photo" src="https://via.placeholder.com/40" alt="User Photo" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--neon-cyan);">
-                        <div>
-                            <h4 id="display-user-name" style="margin-bottom: 0; color: var(--text-primary); font-size: 1.1rem;">User Name</h4>
-                            <span id="display-user-email" style="font-size: 0.8rem; color: var(--text-muted);">user@example.com</span>
+                    <!-- User profile card -->
+                    <div class="card profile-card" id="user-profile-card" style="display:none;">
+                        <div class="profile-row">
+                            <img id="display-user-photo" src="https://via.placeholder.com/40" alt="User Photo" class="profile-avatar">
+                            <div class="profile-info">
+                                <strong id="display-user-name">User Name</strong>
+                                <span id="display-user-email">user@example.com</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="bio-stat">
-                        <span class="bio-stat-label"><i class="fa-solid fa-calendar-days"></i> Age</span>
-                        <span class="bio-stat-value" id="display-user-age" style="color: var(--text-primary);">...</span>
-                    </div>
-                    <div class="bio-stat">
-                        <span class="bio-stat-label"><i class="fa-solid fa-venus-mars"></i> Gender</span>
-                        <span class="bio-stat-value" id="display-user-gender" style="color: var(--text-primary); text-transform: capitalize;">...</span>
-                    </div>
-                    <div class="bio-stat" style="border: none; padding-top: 14px;">
-                        <button id="google-signout-btn" class="quick-prompt-btn" style="color: #FA824C; border-color: rgba(250, 130, 76, 0.4); background: rgba(250, 130, 76, 0.1); justify-content: center; margin-bottom: 0;">
-                            <i class="fa-solid fa-right-from-bracket" style="color: #FA824C;"></i> Sign Out
+                        <div class="bio-stat">
+                            <span class="bio-stat-label"><i class="fa-solid fa-calendar-days"></i> Age</span>
+                            <span class="bio-stat-value" id="display-user-age">—</span>
+                        </div>
+                        <div class="bio-stat">
+                            <span class="bio-stat-label"><i class="fa-solid fa-venus-mars"></i> Gender</span>
+                            <span class="bio-stat-value" id="display-user-gender" style="text-transform:capitalize;">—</span>
+                        </div>
+                        <button id="google-signout-btn" class="signout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
                         </button>
                     </div>
-                </div>
 
-                <div class="card" style="border-color: rgba(99, 159, 171, 0.3);">
-                    <h4><i class="fa-solid fa-heart-crack" style="color: var(--neon-cyan);"></i> Live Monitoring</h4>
-                    <p class="text-sm">Resting Heart Rate: <strong class="stat-value" style="font-size: 1.1rem; margin-left: 5px;">72 BPM</strong></p>
-                    <div class="ekg-monitor">
-                        <svg viewBox="0 0 500 100" class="ekg-line" preserveAspectRatio="none">
-                            <polyline points="0,50 50,50 70,20 90,80 110,10 130,90 150,50 200,50 220,30 240,70 260,50 350,50 370,10 390,90 410,20 430,80 450,50 500,50" style="fill:none;stroke-width:3" />
-                        </svg>
+
+
+                    <!-- Daily tip -->
+                    <div class="card tip-card">
+                        <h4><i class="fa-solid fa-lightbulb"></i> Daily Tip</h4>
+                        <p class="text-sm mock-text">Stay hydrated! Drinking 8 glasses of water a day maintains energy levels and brain function.</p>
                     </div>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 12px; font-style: italic; text-align: center;">* Note: Animated mock data</p>
+
+                    <!-- Disclaimer -->
+                    <div class="card disclaimer-card">
+                        <h4><i class="fa-solid fa-triangle-exclamation"></i> Disclaimer</h4>
+                        <p class="text-sm mock-text">Vitalis is an AI built for educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment.</p>
+                    </div>
+
                 </div>
+            </aside>
 
+        </div><!-- end app-body -->
+    </div><!-- end app-wrapper -->
 
-                <div class="card">
-                    <h4><i class="fa-solid fa-notes-medical" style="margin-right: 8px; color: var(--stat-icon-color);"></i> Daily Tip</h4>
-                    <p class="text-sm mock-text">Stay hydrated! Drinking 8 glasses of water a day maintains energy levels and brain function.</p>
-                </div>
-                <div class="card disclaimer-card">
-                    <h4><i class="fa-solid fa-triangle-exclamation" style="margin-right: 8px;"></i> Disclaimer</h4>
-                    <p class="text-sm mock-text">Vitalis is an AI built for educational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment.</p>
-                </div>
-            </div>
-        </aside>
-
-    </div>
-
-    <!-- MODALS -->
+    <!-- ═══════════════════════════════════════════════════════
+         MODALS
+    ═══════════════════════════════════════════════════════ -->
     <div id="body-map-modal" class="modal-overlay">
         <div class="modal-content text-center">
             <h3><i class="fa-solid fa-child"></i> Symptom Region Selector</h3>
             <button class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
             <div class="body-map-wrap">
                 <svg viewBox="0 0 100 200" class="human-body-svg">
-                    <circle cx="50" cy="20" r="14" data-part="Head" class="body-part" />
-                    <rect x="43" y="32" width="14" height="15" rx="3" data-part="Neck" class="body-part" />
-                    <path d="M 30 46 Q 50 40 70 46 L 66 85 Q 50 95 34 85 Z" data-part="Chest" class="body-part" />
-                    <path d="M 34 85 Q 50 95 66 85 L 63 115 Q 50 120 37 115 Z" data-part="Stomach" class="body-part" />
-                    <path d="M 30 46 Q 15 55 12 90 L 22 92 Q 25 70 34 80 Z" data-part="Left Arm" class="body-part" />
-                    <path d="M 70 46 Q 85 55 88 90 L 78 92 Q 75 70 66 80 Z" data-part="Right Arm" class="body-part" />
-                    <rect x="37" y="115" width="10" height="70" rx="4" data-part="Left Leg" class="body-part" />
-                    <rect x="53" y="115" width="10" height="70" rx="4" data-part="Right Leg" class="body-part" />
+                    <circle cx="50" cy="20" r="14" data-part="Head" class="body-part"/>
+                    <rect x="43" y="32" width="14" height="15" rx="3" data-part="Neck" class="body-part"/>
+                    <path d="M 30 46 Q 50 40 70 46 L 66 85 Q 50 95 34 85 Z" data-part="Chest" class="body-part"/>
+                    <path d="M 34 85 Q 50 95 66 85 L 63 115 Q 50 120 37 115 Z" data-part="Stomach" class="body-part"/>
+                    <path d="M 30 46 Q 15 55 12 90 L 22 92 Q 25 70 34 80 Z" data-part="Left Arm" class="body-part"/>
+                    <path d="M 70 46 Q 85 55 88 90 L 78 92 Q 75 70 66 80 Z" data-part="Right Arm" class="body-part"/>
+                    <rect x="37" y="115" width="10" height="70" rx="4" data-part="Left Leg" class="body-part"/>
+                    <rect x="53" y="115" width="10" height="70" rx="4" data-part="Right Leg" class="body-part"/>
                 </svg>
             </div>
             <p class="text-sm">Click the exact area where you are experiencing symptoms.</p>
@@ -283,15 +344,15 @@
     <div id="onboarding-modal" class="modal-overlay">
         <div class="modal-content text-center">
             <h3><i class="fa-solid fa-user-plus"></i> Complete Your Profile</h3>
-            <p class="text-sm" style="margin-bottom: 20px;">We need a few more details to personalize your health assistance.</p>
-            <div style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
+            <p class="text-sm" style="margin-bottom:20px;">We need a few more details to personalize your health assistance.</p>
+            <div style="display:flex;flex-direction:column;gap:15px;text-align:left;">
                 <div>
-                    <label style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Age</label>
-                    <input type="number" id="onboarding-age" class="login-input" placeholder="e.g. 28" min="1" max="120" style="margin-bottom: 0;">
+                    <label style="font-size:0.85rem;color:var(--text-muted);margin-bottom:5px;display:block;">Age</label>
+                    <input type="number" id="onboarding-age" class="login-input" placeholder="e.g. 28" min="1" max="120" style="margin-bottom:0;">
                 </div>
                 <div>
-                    <label style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Gender</label>
-                    <select id="onboarding-gender" class="login-input" style="margin-bottom: 0;">
+                    <label style="font-size:0.85rem;color:var(--text-muted);margin-bottom:5px;display:block;">Gender</label>
+                    <select id="onboarding-gender" class="login-input" style="margin-bottom:0;">
                         <option value="" disabled selected>Select Gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
@@ -299,15 +360,37 @@
                         <option value="prefer_not_to_say">Prefer not to say</option>
                     </select>
                 </div>
-                <button id="save-onboarding-btn" class="login-btn" style="margin-top: 10px;">
+                <button id="save-onboarding-btn" class="login-btn" style="margin-top:10px;">
                     <i class="fa-solid fa-floppy-disk"></i> Save Details
                 </button>
             </div>
         </div>
     </div>
+
     <div id="toast" class="toast"></div>
 
-    <!-- Link to external JavaScript -->
     <script src="script.js"></script>
+
+    <!-- Info panel toggle (right sidebar on mobile) -->
+    <script>
+    (function(){
+        var infoPanelBtn = document.getElementById('info-panel-btn');
+        var rightPanel   = document.getElementById('right-sidebar');
+        var overlay      = document.getElementById('mobile-overlay');
+        if (!infoPanelBtn || !rightPanel) return;
+        infoPanelBtn.addEventListener('click', function(){
+            if (window.innerWidth >= 1280) return;
+            var isOpen = rightPanel.classList.toggle('panel-open');
+            if (overlay) overlay.classList.toggle('active', isOpen);
+        });
+        // overlay already handled by script.js for left sidebar;
+        // also close right panel on overlay click
+        if (overlay) {
+            overlay.addEventListener('click', function(){
+                rightPanel.classList.remove('panel-open');
+            });
+        }
+    })();
+    </script>
 </body>
 </html>

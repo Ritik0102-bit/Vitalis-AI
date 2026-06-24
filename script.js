@@ -362,7 +362,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentAbortController = null;
 
     function openSidebar() {
-        if (window.innerWidth > 1100) return;
         leftSidebar.classList.add("active");
         mobileOverlay.classList.add("active");
         closeSidebarBtn.style.display = "flex";
