@@ -8,76 +8,66 @@
     --font-heading: 'Space Grotesk', sans-serif;
     --font-body: 'Inter', sans-serif;
 
-    /* Ocean Mint Backgrounds */
-    --bg-0: #040914;
-    /* Deep Abyss */
-    --bg-1: #0A1128;
-    /* Deep Ocean */
-    --bg-2: #121E38;
-    /* Navy Panel */
-    --bg-3: #1A284B;
-    /* Lighter Navy */
-    --bg-4: #22345E;
+    /* Dark Theme Backgrounds */
+    --bg-0: #000000;
+    --bg-1: #0A1118;
+    --bg-2: #14232C;
+    --bg-3: #233D4D; /* Palette Slate/Blue */
+    --bg-4: #2E5066;
 
-    --bg-glass: rgba(18, 30, 56, 0.4);
-    --bg-glass-h: rgba(26, 40, 75, 0.55);
-    --bg-header: rgba(10, 17, 40, 0.75);
-    --bg-drawer: rgba(10, 17, 40, 0.85);
-    --bg-input: rgba(255, 255, 255, 0.05);
+    --bg-glass: rgba(35, 61, 77, 0.4);
+    --bg-glass-h: rgba(35, 61, 77, 0.6);
+    --bg-header: rgba(20, 35, 44, 0.85);
+    --bg-drawer: rgba(20, 35, 44, 0.95);
+    --bg-input: rgba(35, 61, 77, 0.3);
 
-    /* Accents: Mint & Cyan */
-    --violet: #00F5D4;
-    /* Retained name for logic, but it's Mint Green */
-    --violet-l: #42FFE5;
-    --violet-dim: rgba(0, 245, 212, 0.12);
-    --violet-glow: rgba(0, 245, 212, 0.35);
+    /* Accents: Orange from Palette */
+    --violet: #FE7F2D; /* Primary Accent */
+    --violet-l: #FFA566;
+    --violet-dim: rgba(254, 127, 45, 0.15);
+    --violet-glow: rgba(254, 127, 45, 0.35);
 
-    --cyan: #00BBF9;
-    /* Electric Cyan */
-    --cyan-l: #4DD3FA;
-    --cyan-dim: rgba(0, 187, 249, 0.12);
+    --cyan: #E86A1C;
+    --cyan-l: #FE7F2D;
+    --cyan-dim: rgba(232, 106, 28, 0.15);
 
-    --emerald: #00F5D4;
-    /* Merged with Mint */
-    --emerald-dim: rgba(0, 245, 212, 0.12);
+    --emerald: #FE7F2D;
+    --emerald-dim: rgba(254, 127, 45, 0.12);
 
     --amber: #FEE440;
     --amber-dim: rgba(254, 228, 64, 0.12);
 
     --rose: #F15BB5;
-    /* Hot Pink/Rose */
     --rose-dim: rgba(241, 91, 181, 0.12);
 
-    /* Text */
-    --text-0: #F8FAFC;
-    --text-1: rgba(248, 250, 252, 0.85);
-    --text-2: rgba(248, 250, 252, 0.6);
-    --text-3: rgba(248, 250, 252, 0.4);
+    /* Text: Light Grayish Blue from Palette */
+    --text-0: #FFFFFF;
+    --text-1: #EAECF0; /* Palette */
+    --text-2: rgba(234, 236, 240, 0.7);
+    --text-3: rgba(234, 236, 240, 0.4);
 
     /* Borders */
     --b-0: rgba(255, 255, 255, 0.05);
     --b-1: rgba(255, 255, 255, 0.09);
-    --b-v: rgba(0, 245, 212, 0.4);
-    /* Mint Border */
-    --b-c: rgba(0, 187, 249, 0.3);
-    /* Cyan Border */
+    --b-v: rgba(254, 127, 45, 0.4);
+    --b-c: rgba(254, 127, 45, 0.3);
 
     /* Shadows */
-    --s-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
-    --s-md: 0 8px 24px rgba(0, 0, 0, 0.35);
-    --s-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
-    --s-xl: 0 24px 80px rgba(0, 0, 0, 0.6);
-    --s-v: 0 0 30px rgba(0, 245, 212, 0.15), 0 0 60px rgba(0, 245, 212, 0.05);
+    --s-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --s-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --s-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+    --s-xl: 0 24px 80px rgba(0, 0, 0, 0.8);
+    --s-v: 0 0 30px rgba(254, 127, 45, 0.15), 0 0 60px rgba(254, 127, 45, 0.05);
     --s-in: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     /* Gradients */
-    --g-primary: linear-gradient(135deg, #00BBF9, #00F5D4);
-    --g-violet: linear-gradient(135deg, #00F5D4, #42FFE5);
-    --g-text: linear-gradient(135deg, #FFFFFF 0%, #42FFE5 50%, #00BBF9 100%);
+    --g-primary: linear-gradient(135deg, #FE7F2D, #FFA566);
+    --g-violet: linear-gradient(135deg, #FE7F2D, #FFA566);
+    --g-text: linear-gradient(135deg, #FFFFFF 0%, #FFA566 50%, #FE7F2D 100%);
 
     /* Message bubbles */
-    --bot-bg: rgba(18, 30, 56, 0.85);
-    --usr-bg: linear-gradient(135deg, #00BBF9, #0088CC);
+    --bot-bg: rgba(35, 61, 77, 0.85);
+    --usr-bg: linear-gradient(135deg, #FE7F2D, #E86A1C);
 
     /* Layout */
     --header-h: 64px;
@@ -151,7 +141,7 @@ body.light-theme {
     --bot-bg: rgba(255, 255, 255, 0.95);
     --usr-bg: linear-gradient(135deg, #0EA5E9, #0284C7);
 
-    background: #E2E8F0;
+    background: #F8FAFC; /* Softer, cooler light gray */
 }
 
 body.light-theme .chat-main,
@@ -165,9 +155,19 @@ body.light-theme .card {
     -webkit-backdrop-filter: none !important;
 }
 
+body.light-theme .grid-lines, 
+body.light-theme .bg-mesh {
+    display: none; /* Hide squarish design and old mesh */
+}
+
 body.light-theme::before {
-    background: radial-gradient(ellipse 60% 50% at 20% 20%, rgba(16, 185, 129, 0.06), transparent 60%),
-        radial-gradient(ellipse 50% 40% at 80% 70%, rgba(14, 165, 233, 0.06), transparent 60%);
+    background: radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.08), transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.08), transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(241, 91, 181, 0.04), transparent 60%);
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
 }
 
 body.light-theme .bg-mesh {
@@ -564,22 +564,22 @@ body.light-theme .login-box {
 }
 
 .brand-logo-wrap {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--r-sm);
-    background: var(--g-primary);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 4px solid #EBF4FA;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 16px rgba(0, 245, 212, 0.3);
+    box-shadow: 0 4px 12px rgba(49, 130, 206, 0.15);
     position: relative;
-    overflow: hidden;
 }
 
 .brand-pulse {
     font-size: 1.1rem;
-    color: #fff;
-    animation: heartbeat 2s ease-in-out infinite;
+    color: #3182CE;
+    animation: heartbeat 1.8s ease-in-out infinite;
 }
 
 @keyframes heartbeat {
@@ -1055,13 +1055,9 @@ body.light-theme .lang-select option {
 .empty-hero-icon {
     width: 90px;
     height: 90px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0, 245, 212, 0.2), rgba(0, 187, 249, 0.1));
-    border: 1px solid rgba(0, 245, 212, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 50px rgba(0, 245, 212, 0.2);
     animation: heroFloat 4s ease-in-out infinite alternate;
 }
 
@@ -1076,10 +1072,11 @@ body.light-theme .lang-select option {
 }
 
 .empty-hero-icon i {
-    font-size: 2.5rem;
-    background: var(--g-text);
+    font-size: 4.5rem;
+    background: var(--g-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px rgba(0, 245, 212, 0.7));
 }
 
 .empty-title {
