@@ -20,6 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const saveOnboardingBtn = document.getElementById('save-onboarding-btn');
 
     let currentUser = null;
+    let currentChatHistory = [];
+    let currentSessionId = crypto.randomUUID();
+    
+    // UI Elements for Sessions
+    const sessionList = document.getElementById('session-list');
+    const newChatBtn = document.getElementById('new-chat-btn');
 
     function showToast(message) {
         toast.textContent = message;
@@ -108,6 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
             userProfileCard.style.display = 'block';
             
             checkAndShowOnboarding(user);
+            loadChatHistory(user);
         }
     }
 
@@ -151,6 +158,104 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             window.location.reload(); 
         });
+    }
+
+    async function loadChatHistory(user) {
+        try {
+            const response = await fetch(`/api/getHistory?user_id=${user.uid}`);
+            if (response.ok) {
+                const sessions = await response.json();
+                renderSessionList(sessions);
+            }
+        } catch (e) {
+            console.error("Error loading sessions", e);
+        }
+    }
+
+    function renderSessionList(sessions) {
+        if (!sessionList) return;
+        sessionList.innerHTML = "";
+        if (sessions.length === 0) {
+            sessionList.innerHTML = "<p class='text-sm' style='padding: 10px; text-align: center; color: var(--text-muted);'>No past consultations.</p>";
+            return;
+        }
+
+        sessions.forEach(session => {
+            const item = document.createElement("div");
+            item.className = "session-item";
+            if (session.session_id === currentSessionId) item.classList.add("active");
+            
+            const date = new Date(session.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            
+            item.innerHTML = `
+                <div class="session-title">${session.title || "New Consultation"}</div>
+                <div class="session-date">${date}</div>
+            `;
+            
+            item.addEventListener("click", () => {
+                document.querySelectorAll(".session-item").forEach(el => el.classList.remove("active"));
+                item.classList.add("active");
+                fetchSessionMessages(session.session_id);
+            });
+            
+            sessionList.appendChild(item);
+        });
+    }
+
+    async function fetchSessionMessages(sessionId) {
+        if (!currentUser) return;
+        currentSessionId = sessionId;
+        currentChatHistory = [];
+        chatMessages.innerHTML = "";
+        if (emptyState) emptyState.style.display = "none";
+        
+        try {
+            const response = await fetch(`/api/getHistory?user_id=${currentUser.uid}&session_id=${sessionId}`);
+            if (response.ok) {
+                const messages = await response.json();
+                for (const msg of messages) {
+                    currentChatHistory.push({ role: msg.sender, content: msg.text });
+                    
+                    const msgDiv = document.createElement("div");
+                    msgDiv.classList.add("message");
+                    msgDiv.classList.add(msg.sender === "user" ? "user-msg" : "bot-msg");
+                    
+                    let safeText = String(msg.text || "");
+                    safeText = safeText.replace(/\\n/g, "\n"); 
+                    let parsedText = safeText.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+                    parsedText = parsedText.replace(/\n/g, "<br>");
+                    
+                    msgDiv.innerHTML = parsedText;
+                    chatMessages.appendChild(msgDiv);
+                }
+                scrollToBottom();
+            }
+        } catch (e) {
+            console.error("Error loading session messages", e);
+        }
+    }
+
+    if (newChatBtn) {
+        newChatBtn.addEventListener("click", () => {
+            startNewSession();
+        });
+    }
+
+    function startNewSession() {
+        if (isGenerating && currentAbortController) {
+            currentAbortController.abort();
+        }
+        currentSessionId = crypto.randomUUID();
+        currentChatHistory = [];
+        chatMessages.innerHTML = "";
+        
+        document.querySelectorAll(".session-item").forEach(el => el.classList.remove("active"));
+
+        if (emptyState) {
+            chatMessages.appendChild(emptyState);
+            emptyState.style.display = "flex";
+            setTimeout(() => { emptyState.style.opacity = "1"; }, 50);
+        }
     }
     
     // --- EXISTING DASHBOARD LOGIC ---
@@ -534,14 +639,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- CUSTOM LLM API INTEGRATION ---
-    async function fetchAiDiagnosis(symptomsText, base64ImageRaw, mimeType, signal) {
+    async function fetchAiDiagnosis(symptomsText, base64ImageRaw, mimeType, signal, history) {
         try {
             const selectedLanguage = document.getElementById("language-select") ? document.getElementById("language-select").value : "English";
             
             const payload = {
                 message: symptomsText,
                 language: selectedLanguage,
-                image: base64ImageRaw || null
+                image: base64ImageRaw || null,
+                history: history || []
             };
 
             const abortPromise = new Promise((resolve) => {
@@ -615,6 +721,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Append user message immediately
         addMessage(text, "user", false, imageToDisplay);
+        
+        currentChatHistory.push({ role: "user", content: text });
+        if (currentUser) {
+            const isFirstMessage = currentChatHistory.length === 1;
+            fetch('/api/saveMessage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: currentUser.uid, session_id: currentSessionId, sender: 'user', text: text })
+            }).then(() => {
+                if (isFirstMessage) loadChatHistory(currentUser); // Refresh session list
+            }).catch(e => console.error("Error saving message", e));
+        }
 
         userInput.value = "";
         previewContainer.style.display = "none";
@@ -633,7 +751,7 @@ document.addEventListener("DOMContentLoaded", () => {
         addTypingIndicator();
 
         try {
-            let responseHTML = await fetchAiDiagnosis(text, imageToDisplay, attachedMimeType, currentAbortController.signal);
+            let responseHTML = await fetchAiDiagnosis(text, imageToDisplay, attachedMimeType, currentAbortController.signal, currentChatHistory);
             
             removeTypingIndicator();
 
@@ -651,6 +769,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 responseHTML = responseHTML.replace(chipRegex, "").trim();
 
                 await addMessage(responseHTML, "bot", true);
+                
+                currentChatHistory.push({ role: "assistant", content: responseHTML });
+                if (currentUser) {
+                    fetch('/api/saveMessage', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_id: currentUser.uid, session_id: currentSessionId, sender: 'assistant', text: responseHTML })
+                    }).catch(e => console.error("Error saving message", e));
+                }
+
                 renderChips(chips);
             }
         } catch (error) {
@@ -680,25 +808,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     clearBtn.addEventListener("click", () => {
-        if (isGenerating && currentAbortController) {
-            currentAbortController.abort();
-        }
-        const msgs = document.querySelectorAll('.message');
-        msgs.forEach(msg => {
-            msg.style.transform = "scale(0)";
-            msg.style.opacity = "0";
-            msg.style.transition = "all 0.3s ease";
-        });
-        setTimeout(() => {
-            chatMessages.innerHTML = "";
-            if(emptyState) {
-                chatMessages.appendChild(emptyState);
-                emptyState.style.display = "flex";
-                setTimeout(() => { emptyState.style.opacity = "1"; }, 50);
-            }
-            setTimeout(() => {
-                showToast("Session reset successfully.");
-            }, 300);
-        }, 300);
+        startNewSession();
+        showToast("Session cleared successfully.");
     });
 });

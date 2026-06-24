@@ -94,42 +94,15 @@
             </div>
             <div class="sidebar-content">
 
-                <div class="card">
-                    <h4><i class="fa-solid fa-user-doctor"></i> Recent Vitals</h4>
-                    <p class="text-sm" style="margin-bottom: 12px;">Last synced: Today, 08:30 AM</p>
-                    <div class="bio-stat">
-                        <span class="bio-stat-label"><i class="fa-solid fa-droplet"></i> Blood Pressure</span>
-                        <span class="bio-stat-value">120/80</span>
-                    </div>
-                    <div class="bio-stat">
-                        <span class="bio-stat-label"><i class="fa-solid fa-lungs"></i> Blood Oxygen</span>
-                        <span class="bio-stat-value">98%</span>
-                    </div>
-                    <div class="bio-stat">
-                        <span class="bio-stat-label"><i class="fa-solid fa-temperature-half"></i> Body Temp</span>
-                        <span class="bio-stat-value">98.6°F</span>
-                    </div>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 12px; font-style: italic; text-align: center;">* Note: Mock data for illustration</p>
-                </div>
+                <button id="new-chat-btn" class="quick-prompt-btn" style="background: var(--neon-cyan); color: white; justify-content: center; margin-bottom: 20px; border: none; font-weight: bold;">
+                    <i class="fa-solid fa-plus"></i> New Consultation
+                </button>
 
-                <div class="card prompt-list-wrap">
-                    <h4>Direct Prompts</h4>
-                    <p class="text-sm mock-text">Click to instantly consult the AI.</p>
-                    <button class="quick-prompt-btn" data-text="I am experiencing a severe headache and fever.">
-                        <i class="fa-solid fa-head-side-virus"></i> Headache &amp; Fever
-                    </button>
-                    <button class="quick-prompt-btn" data-text="I have an upset stomach and feel nauseous.">
-                        <i class="fa-solid fa-virus"></i> Stomach Issues
-                    </button>
-                    <button class="quick-prompt-btn" data-text="I have a sore throat, runny nose, and a persistent cough.">
-                        <i class="fa-solid fa-lungs-virus"></i> Cold &amp; Cough
-                    </button>
-                    <button class="quick-prompt-btn" data-text="I have pain and aching in my joints and muscles.">
-                        <i class="fa-solid fa-bone"></i> Joint / Muscle Pain
-                    </button>
-                    <button class="quick-prompt-btn" data-text="I have developed a skin rash that is red and itchy.">
-                        <i class="fa-solid fa-hand-dots"></i> Skin Rash / Allergy
-                    </button>
+                <div class="card" id="chat-history-card" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+                    <h4><i class="fa-solid fa-clock-rotate-left"></i> Past Consultations</h4>
+                    <div id="session-list" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                        <!-- Sessions will load here -->
+                    </div>
                 </div>
                 
                 <div class="card emergency-card">
@@ -173,6 +146,17 @@
                     <i class="fa-solid fa-dna"></i>
                     <h3>How can Vitalis help you today?</h3>
                     <p>Describe your symptoms, upload a lab report, or use the body map to isolate areas of discomfort. I am ready to analyze.</p>
+                    <div class="prompt-list-wrap" style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 600px;">
+                        <button class="quick-prompt-btn" data-text="I am experiencing a severe headache and fever.">
+                            <i class="fa-solid fa-head-side-virus"></i> Headache &amp; Fever
+                        </button>
+                        <button class="quick-prompt-btn" data-text="I have an upset stomach and feel nauseous.">
+                            <i class="fa-solid fa-virus"></i> Stomach Issues
+                        </button>
+                        <button class="quick-prompt-btn" data-text="I have a sore throat, runny nose, and a persistent cough.">
+                            <i class="fa-solid fa-lungs-virus"></i> Cold &amp; Cough
+                        </button>
+                    </div>
                 </div>
             </div>
 

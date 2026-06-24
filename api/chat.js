@@ -3,7 +3,7 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { message, language, image } = req.body;
+  const { message, language, image, history } = req.body;
 
   // WARNING: This is a placeholder for your hosted Custom LLM endpoint
   const CUSTOM_LLM_URL = process.env.CUSTOM_LLM_URL;
@@ -26,7 +26,8 @@ module.exports = async (req, res) => {
       body: JSON.stringify({ 
         input: message, 
         language: language,
-        image: image
+        image: image,
+        history: history || []
       })
     });
 
