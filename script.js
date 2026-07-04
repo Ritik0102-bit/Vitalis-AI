@@ -698,7 +698,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- CUSTOM LLM API INTEGRATION ---
-    async function fetchAiDiagnosis(symptomsText, base64ImageRaw, mimeType, signal, history) {
+    async function fetchAiDiagnosis(symptomsText, base64ImageRaw, mimeType, signal, history, onProgress) {
         try {
             const selectedLanguage = document.getElementById("language-select") ? document.getElementById("language-select").value : "English";
             
@@ -736,7 +736,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     while (true) {
                         const { done, value } = await reader.read();
                         if (done) break;
-                        resultText += decoder.decode(value, { stream: true });
+                        const chunk = decoder.decode(value, { stream: true });
+                        resultText += chunk;
+                        if (onProgress) onProgress(resultText);
                     }
                     return resultText.trim();
                 } else {
@@ -822,9 +824,24 @@ document.addEventListener("DOMContentLoaded", () => {
         sendBtn.classList.add("stop-btn");
 
         addTypingIndicator();
+        let isFirstChunk = true;
+        let liveMsgDiv = null;
 
         try {
-            let responseHTML = await fetchAiDiagnosis(text, imageToDisplay, attachedMimeType, currentAbortController.signal, currentChatHistory);
+            let responseHTML = await fetchAiDiagnosis(text, imageToDisplay, attachedMimeType, currentAbortController.signal, currentChatHistory, (currentText) => {
+                if (isFirstChunk) {
+                    isFirstChunk = false;
+                    removeTypingIndicator();
+                    liveMsgDiv = document.createElement("div");
+                    liveMsgDiv.classList.add("message", "bot-msg");
+                    chatMessages.appendChild(liveMsgDiv);
+                }
+                if (liveMsgDiv) {
+                    let cleanText = currentText.replace(/\[CHIP:\s*(.*?)\]/g, "").trim();
+                    liveMsgDiv.innerHTML = cleanText || "...";
+                    scrollToBottom();
+                }
+            });
             
             removeTypingIndicator();
 
@@ -841,7 +858,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 responseHTML = responseHTML.replace(chipRegex, "").trim();
 
-                await addMessage(responseHTML, "bot", true);
+                if (liveMsgDiv) {
+                    liveMsgDiv.innerHTML = responseHTML;
+                } else {
+                    await addMessage(responseHTML, "bot", true);
+                }
                 
                 currentChatHistory.push({ role: "assistant", content: responseHTML });
                 if (currentUser) {
