@@ -703,6 +703,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const selectedLanguage = document.getElementById("language-select") ? document.getElementById("language-select").value : "English";
             
             const payload = {
+                input: symptomsText,
                 message: symptomsText,
                 language: selectedLanguage,
                 image: base64ImageRaw || null,
