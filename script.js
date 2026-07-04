@@ -716,9 +716,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // We will call our custom Vercel /api/chat endpoint
-            // This endpoint will connect to the hosted Custom Healthcare LLM
-            const apiPromise = fetch('/api/chat', {
+            // We will call our Hugging Face Space directly to bypass Vercel timeouts!
+            const apiPromise = fetch('https://ritik0102-vitalis-api.hf.space/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -727,8 +726,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!res.ok) {
                     throw new Error("API responded with status: " + res.status);
                 }
-                const data = await res.json();
-                return data.response;
+                // Support both streaming text chunks and standard JSON responses
+                const contentType = res.headers.get("content-type") || "";
+                if (contentType.includes("text/plain") || contentType.includes("text/event-stream")) {
+                    const reader = res.body.getReader();
+                    const decoder = new TextDecoder("utf-8");
+                    let resultText = "";
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        resultText += decoder.decode(value, { stream: true });
+                    }
+                    return resultText.trim();
+                } else {
+                    const data = await res.json();
+                    return data.output || data.response;
+                }
             }).catch(e => {
                 if (e.name === 'AbortError') return null;
                 console.error("Custom AI API Error:", e);
