@@ -743,7 +743,55 @@ document.addEventListener("DOMContentLoaded", () => {
                     return resultText.trim();
                 } else {
                     const data = await res.json();
-                    return data.output || data.response;
+                    let mainText = data.output || data.response || "";
+                    
+                    // Separate RAG Thinking (Top of Chat) and Clinical Triage (End of Chat)
+                    if (data.triage || (data.rag_context && data.rag_context.length > 0)) {
+                        let ragThinkingHTML = "";
+                        if (data.rag_context && data.rag_context.length > 0) {
+                            let casesList = "";
+                            data.rag_context.forEach(item => {
+                                casesList += `
+                                    <div style="margin-top: 6px; padding: 8px 10px; background: rgba(0, 0, 0, 0.15); border-radius: 6px; border-left: 3px solid #8B5CF6;">
+                                        <div style="font-weight: 600; font-size: 0.77rem; color: #A78BFA;">[ID: ${item.id}] ${item.specialty} <span style="float: right; color: #34D399; font-weight: 700;">${item.similarity_score}% Semantic Match</span></div>
+                                        <div style="font-size: 0.74rem; margin-top: 4px; font-style: italic; color: var(--text-color); opacity: 0.9;"><strong>Patient Case:</strong> "${item.patient_query.substring(0, 95)}..."</div>
+                                        <div style="font-size: 0.74rem; margin-top: 3px; color: var(--text-color); opacity: 0.95;"><strong>Verified Doctor Advice:</strong> ${item.doctor_response.substring(0, 130)}...</div>
+                                    </div>
+                                `;
+                            });
+                            ragThinkingHTML = `
+                                <details class="vitalis-rag-thinking" style="cursor: pointer;">
+                                    <summary style="font-weight: 600; color: #A78BFA; list-style: none; display: flex; align-items: center; justify-content: space-between;">
+                                        <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-brain" style="color: #A78BFA;"></i> Vitalis AI Clinical Reasoning & RAG Retrieval (${data.rag_context.length} Cases Grounded)</span>
+                                        <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; opacity: 0.8;"></i>
+                                    </summary>
+                                    <div style="margin-top: 8px; font-size: 0.76rem; color: var(--text-color); opacity: 0.85; border-top: 1px solid rgba(139, 92, 246, 0.2); padding-top: 6px;">
+                                        <em>Retrieved real-world clinical consultations from ChatDoctor KB prior to synthesizing diagnosis:</em>
+                                        ${casesList}
+                                    </div>
+                                </details>
+                            `;
+                        }
+
+                        let triageBadgeHTML = "";
+                        if (data.triage) {
+                            const triage = data.triage;
+                            triageBadgeHTML = `
+                                <div class="vitalis-triage-badge" style="border-left: 4px solid ${triage.color};">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; font-weight: 600; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+                                        <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-heart-pulse" style="color: ${triage.color};"></i> Clinical Acuity Assessment</span>
+                                        <span style="padding: 3px 10px; border-radius: 12px; font-size: 0.74rem; font-weight: 700; background: ${triage.color}; color: #fff; box-shadow: 0 2px 6px ${triage.color}40;">Level ${triage.level}: ${triage.title}</span>
+                                    </div>
+                                    <div style="font-size: 0.79rem; opacity: 0.9; line-height: 1.4;">
+                                        <strong>Clinical Recommendation:</strong> ${triage.description}
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        return ragThinkingHTML + mainText + triageBadgeHTML;
+                    }
+                    return mainText;
                 }
             }).catch(e => {
                 if (e.name === 'AbortError') return null;

@@ -1,3 +1,5 @@
+const { retrieveClinicalContext, assessClinicalTriage } = require('./ragEngine');
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -17,15 +19,30 @@ module.exports = async (req, res) => {
   const customLlmUrl = process.env.CUSTOM_LLM_URL;
   const customLlmKey = process.env.CUSTOM_LLM_API_KEY;
 
+  // Perform RAG Retrieval from ChatDoctor Knowledge Base & Triage Acuity Assessment
+  const retrievedCases = await retrieveClinicalContext(userMessage, 2);
+  const triageInfo = assessClinicalTriage(userMessage);
+
+  let ragContextText = "";
+  if (retrievedCases && retrievedCases.length > 0) {
+    ragContextText = `\n\n=== GROUNDED MEDICAL KNOWLEDGE BASE (CHATDOCTOR RAG RETRIEVAL) ===\n`;
+    retrievedCases.forEach((item, idx) => {
+      ragContextText += `[Retrieved Case #${idx + 1} | ID: ${item.id} | Specialty: ${item.specialty} | Semantic Match: ${item.similarity_score}%]\n`;
+      ragContextText += `Patient Query: ${item.patient_query}\n`;
+      ragContextText += `Verified Doctor Clinical Advice: ${item.doctor_response}\n\n`;
+    });
+    ragContextText += `INSTRUCTION FOR VITALIS AI: You MUST ground your clinical considerations, differential diagnoses, and self-care recommendations in the verified ChatDoctor clinical consultations retrieved above.\n==================================================================`;
+  }
+
   // 1. If Groq API Key is available (Alternative 1: High Performance, Zero Timeouts, Free Llama-3 70B)
   if (groqApiKey) {
     try {
-      const systemPrompt = `You are Vitalis AI, an advanced, empathetic, and clinical healthcare AI assistant created by Ritik and the Vitalis AI Team. You are powered by extensive medical triage protocols and clinical datasets (such as ChatDoctor and clinical counseling guidelines).
+      const systemPrompt = `You are Vitalis AI, an advanced, empathetic, and clinical healthcare AI assistant created by Ritik and the Vitalis AI Team. You are powered by extensive medical triage protocols and grounded in the ChatDoctor clinical dataset.${ragContextText}
 
 YOUR CLINICAL BEHAVIOR & PROTOCOLS:
 1. EMPATHY & CLARITY: Always greet the patient warmly, validate their feelings/symptoms, and explain medical terms cleanly and simply.
 2. STRUCTURED TRIAGE: When a patient describes symptoms or asks health questions, structure your answer clearly:
-   - **Potential Considerations**: Discuss possible causes (from common benign issues to conditions requiring closer monitoring).
+   - **Potential Considerations**: Discuss possible causes (from common benign issues to conditions requiring closer monitoring), grounded in your RAG knowledge.
    - **Key Questions**: Ask 2-3 targeted clarifying questions (e.g., duration, severity, fever, accompanying symptoms).
    - **Self-Care / Home Relief**: Suggest safe, evidence-based home comfort or lifestyle measures for mild symptoms if appropriate.
    - **When to Seek Immediate Medical Attention**: Highlight critical "red flag" symptoms that require emergency care or a doctor's visit.
@@ -81,7 +98,12 @@ If replying in another language, translate the chip text to ${targetLang} as wel
       const groqData = await groqResponse.json();
       const outputText = groqData.choices?.[0]?.message?.content || "I apologize, but I could not generate a response right now. Please try again.";
 
-      return res.status(200).json({ response: outputText, output: outputText });
+      return res.status(200).json({ 
+        response: outputText, 
+        output: outputText,
+        rag_context: retrievedCases,
+        triage: triageInfo
+      });
     } catch (err) {
       console.error("Error calling Groq API:", err);
       return res.status(500).json({ error: "Failed to communicate with Vitalis AI Brain (Groq API)." });
@@ -102,7 +124,9 @@ If replying in another language, translate the chip text to ${targetLang} as wel
           message: userMessage,
           language: targetLang,
           image: image,
-          history: history || []
+          history: history || [],
+          rag_context: retrievedCases,
+          triage: triageInfo
         })
       });
 
@@ -116,7 +140,12 @@ If replying in another language, translate the chip text to ${targetLang} as wel
         finalOutput = finalOutput.replace(/Chat Doctor/gi, "Vitalis AI");
         finalOutput = finalOutput.replace(/ChatDoctor/gi, "Vitalis AI");
       }
-      return res.status(200).json({ response: finalOutput, output: finalOutput });
+      return res.status(200).json({ 
+        response: finalOutput, 
+        output: finalOutput,
+        rag_context: retrievedCases,
+        triage: triageInfo
+      });
     } catch (err) {
       console.error("Error calling Custom LLM URL:", err);
       return res.status(500).json({ error: "Failed to connect to Custom LLM." });
@@ -126,6 +155,8 @@ If replying in another language, translate the chip text to ${targetLang} as wel
   // 3. If no valid API key is configured yet, provide clear, step-by-step instructions
   return res.status(200).json({ 
     response: `[Vitalis AI System Setup Required]\n\nWelcome to your custom **Vitalis AI** chatbot brain! To enable instant **500+ tokens/second** Llama-3 70B medical triaging without timeouts (Alternative 1):\n\n1. Get your **100% Free API Key** at [console.groq.com/keys](https://console.groq.com/keys).\n2. Add the environment variable to Vercel Project Settings (or local \`.env\` file):\n   - **Variable Name:** \`GROQ_API_KEY\`\n   - **Value:** \`gsk_...\` (your key)\n3. Redeploy on Vercel or restart your local server.\n\n*(You sent: "${userMessage}")*`,
-    output: `[Vitalis AI System Setup Required]\n\nWelcome to your custom **Vitalis AI** chatbot brain! To enable instant **500+ tokens/second** Llama-3 70B medical triaging without timeouts (Alternative 1):\n\n1. Get your **100% Free API Key** at [console.groq.com/keys](https://console.groq.com/keys).\n2. Add the environment variable to Vercel Project Settings (or local \`.env\` file):\n   - **Variable Name:** \`GROQ_API_KEY\`\n   - **Value:** \`gsk_...\` (your key)\n3. Redeploy on Vercel or restart your local server.\n\n*(You sent: "${userMessage}")*`
+    output: `[Vitalis AI System Setup Required]\n\nWelcome to your custom **Vitalis AI** chatbot brain! To enable instant **500+ tokens/second** Llama-3 70B medical triaging without timeouts (Alternative 1):\n\n1. Get your **100% Free API Key** at [console.groq.com/keys](https://console.groq.com/keys).\n2. Add the environment variable to Vercel Project Settings (or local \`.env\` file):\n   - **Variable Name:** \`GROQ_API_KEY\`\n   - **Value:** \`gsk_...\` (your key)\n3. Redeploy on Vercel or restart your local server.\n\n*(You sent: "${userMessage}")*`,
+    rag_context: retrievedCases,
+    triage: triageInfo
   });
 };

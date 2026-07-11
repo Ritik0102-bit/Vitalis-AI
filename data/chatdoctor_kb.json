@@ -1,0 +1,142 @@
+[
+  {
+    "id": "CD-1001",
+    "specialty": "Neurology / General Medicine",
+    "symptoms": ["headache", "fever", "severe headache", "migraine", "stiff neck", "nausea"],
+    "patient_query": "I am experiencing a severe headache and fever for the last 24 hours. What could be the cause and what should I do?",
+    "doctor_response": "A severe headache accompanied by fever can indicate several underlying conditions. Most commonly, viral infections (such as influenza, COVID-19, or sinus infections) cause both symptoms. However, if the headache is sudden, excruciating ('thunderclap headache'), accompanied by a stiff neck, sensitivity to light, confusion, or vomiting, it could indicate a more serious condition such as meningitis or encephalitis. For mild viral symptoms, rest, hydration, and over-the-counter antipyretics like Acetaminophen or Ibuprofen can reduce fever and headache. If headache worsens or neck stiffness appears, seek emergency medical care immediately."
+  },
+  {
+    "id": "CD-1002",
+    "specialty": "Neurology",
+    "symptoms": ["migraine", "tension headache", "one sided headache", "throbbing head", "aura", "light sensitivity"],
+    "patient_query": "What are the differences between a migraine and a tension headache? My head is throbbing on one side.",
+    "doctor_response": "Migraines and tension headaches have distinct clinical presentations. A migraine is typically unilateral (one-sided), moderate to severe in intensity, and characterized by a throbbing or pulsating sensation. It is frequently accompanied by nausea, vomiting, photophobia (sensitivity to light), and phonophobia (sensitivity to sound). Up to 30% of patients experience visual auras prior to onset. Conversely, a tension headache usually presents as bilateral (both sides), mild to moderate dull pain, often described as a tight band squeezing around the forehead or back of the head, and rarely involves nausea or visual auras. Acute migraine management often includes NSAIDs or triptans prescribed by a physician."
+  },
+  {
+    "id": "CD-1003",
+    "specialty": "Cardiology / Emergency Medicine",
+    "symptoms": ["chest pain", "shortness of breath", "heart attack", "arm pain", "jaw pain", "palpitations", "heavy chest"],
+    "patient_query": "I have sudden tightness and pressure in the center of my chest radiating to my left arm, along with shortness of breath. Should I be concerned?",
+    "doctor_response": "CRITICAL ALERT: Sudden chest pressure radiating to the left arm, jaw, or back accompanied by shortness of breath, sweating (diaphoresis), or dizziness are classic symptoms of Acute Coronary Syndrome (ACS) or Myocardial Infarction (heart attack). DO NOT DRIVE YOURSELF TO THE HOSPITAL. Call emergency medical services (911 or local emergency number) immediately. While waiting for paramedics, if not allergic and advised by emergency dispatch, chewing a non-enteric coated Aspirin (325 mg) may help inhibit platelet aggregation. Immediate medical evaluation with an ECG and cardiac enzyme testing is vital."
+  },
+  {
+    "id": "CD-1004",
+    "specialty": "Gastroenterology",
+    "symptoms": ["stomach pain", "abdominal pain", "nausea", "vomiting", "diarrhea", "food poisoning", "cramps"],
+    "patient_query": "I have been having sharp abdominal cramps, watery diarrhea, and nausea since eating seafood last night. How should I treat this?",
+    "doctor_response": "Your presentation strongly suggests acute gastroenteritis or food poisoning secondary to ingested pathogens or toxins from the seafood. The primary clinical risk in acute diarrhea and vomiting is dehydration and electrolyte imbalance. Treatment focuses on aggressive oral rehydration therapy using Oral Rehydration Solutions (ORS) containing glucose and essential electrolytes (sodium, potassium). Avoid anti-diarrheal medications like Loperamide if you have a high fever or bloody stools, as this can delay pathogen clearance. If symptoms persist beyond 48 hours, or if you develop high fever, severe localized lower right quadrant pain (rule out appendicitis), or signs of severe dehydration (dark urine, dizziness), seek medical evaluation."
+  },
+  {
+    "id": "CD-1005",
+    "specialty": "Pulmonology / Infectious Disease",
+    "symptoms": ["cough", "dry cough", "fever", "sore throat", "shortness of breath", "cold", "flu", "bronchitis"],
+    "patient_query": "I have had a persistent dry cough, mild fever, and sore throat for three days. Is this COVID-19, the flu, or bronchitis?",
+    "doctor_response": "A persistent dry cough with mild fever and sore throat can be caused by viral upper respiratory tract infections including Influenza, COVID-19, Acute Bronchitis, or common cold coronaviruses/rhinoviruses. Rapid antigen testing for COVID-19 and Influenza is recommended for accurate differentiation. For symptomatic relief, throat lozenges, warm honey-tea (in adults), steam inhalation, and over-the-counter antitussives (like Dextromethorphan) can soothe mucosal irritation. If the cough produces thick green or rust-colored sputum, or if you experience chest pain when breathing deeply or resting shortness of breath, a physician should auscultate your lungs and rule out pneumonia."
+  },
+  {
+    "id": "CD-1006",
+    "specialty": "Endocrinology / Internal Medicine",
+    "symptoms": ["diabetes", "high blood sugar", "frequent urination", "excessive thirst", "polyuria", "polydipsia", "fatigue"],
+    "patient_query": "I am feeling constantly tired, extremely thirsty all day, and I have to urinate every hour. What blood tests should I get?",
+    "doctor_response": "Classic symptoms of polyuria (frequent urination), polydipsia (excessive thirst), and chronic fatigue strongly warrant screening for Diabetes Mellitus (type 1 or type 2). When blood glucose levels exceed the renal threshold (~180 mg/dL), glucose spills into the urine, pulling water with it via osmotic diuresis and causing systemic dehydration and fatigue. You should schedule a consultation with a healthcare provider for the following diagnostic blood panel: Fasting Plasma Glucose (FPG), Hemoglobin A1c (HbA1c to measure 3-month average blood glucose), and a routine Urinalysis to check for glucosuria and ketones. If HbA1c is >= 6.5% or Fasting Glucose is >= 126 mg/dL on two separate tests, diabetes is diagnosed."
+  },
+  {
+    "id": "CD-1007",
+    "specialty": "Dermatology / Immunology",
+    "symptoms": ["skin rash", "itching", "hives", "urticaria", "allergic reaction", "red bumps", "swelling"],
+    "patient_query": "I suddenly developed raised, red, very itchy welts across my torso and arms after trying a new laundry detergent. How do I stop the itching?",
+    "doctor_response": "You are describing Acute Urticaria (hives), which is a common hypersensitivity reaction caused by mast cell degranulation and histamine release in response to a contact allergen or chemical irritant (such as the new laundry detergent). First-line treatment involves immediately discontinuing the offending detergent and re-washing your clothing in hypoallergenic, fragrance-free water. For rapid symptomatic relief, oral second-generation non-drowsy antihistamines (e.g., Cetirizine 10 mg, Loratadine 10 mg, or Fexofenadine) can suppress histamine pathways. Topical soothing agents like calamine lotion or cool compresses also reduce pruritus. CRITICAL WARNING: If you experience facial swelling, lip/tongue swelling, or difficulty breathing, this indicates anaphylaxis requiring emergency Epinephrine administration."
+  },
+  {
+    "id": "CD-1008",
+    "specialty": "Orthopedics / Sports Medicine",
+    "symptoms": ["ankle sprain", "swollen ankle", "joint pain", "twisted ankle", "foot injury", "bruising"],
+    "patient_query": "I rolled my ankle while jogging yesterday. It is swollen and bruised, but I can bear some weight on it. What is the best recovery protocol?",
+    "doctor_response": "Based on your ability to bear weight, this likely corresponds to a Grade I or moderate Grade II lateral ligament sprain (most commonly involving the anterior talofibular ligament). To differentiate from a fracture requiring X-ray, clinicians use the Ottawa Ankle Rules (bone tenderness along the lateral or medial malleolus or inability to bear weight for 4 steps). For ligamentous sprains, initiate the R.I.C.E. / P.E.A.C.E. recovery protocol: Protection (use an ankle brace or support), Rest (avoid high-impact jogging for 1-2 weeks), Ice (apply cold packs wrapped in cloth for 15-20 minutes every 2-3 hours during the first 48 hours to reduce inflammation), Compression (elastic bandage wrapping), and Elevation (keep the ankle above heart level when seated). Over-the-counter NSAIDs can aid acute pain management."
+  },
+  {
+    "id": "CD-1009",
+    "specialty": "Psychiatry / Mental Health",
+    "symptoms": ["anxiety", "panic attack", "racing heart", "shortness of breath", "stress", "insomnia", "worry"],
+    "patient_query": "I keep having sudden episodes where my heart races, my chest feels tight, my palms sweat, and I feel intense fear out of nowhere. Is my heart failing or is it anxiety?",
+    "doctor_response": "While sudden palpitations, chest tightness, and diaphoresis always require an initial medical checkup (ECG and basic lab panel) to rule out cardiac or thyroid abnormalities (such as hyperthyroidism), episodes that occur abruptly with intense fear and peak within 10 minutes are the hallmark of Panic Attacks (Panic Disorder). During a panic attack, the sympathetic nervous system triggers an acute 'fight-or-flight' adrenaline surge. To abort an acute panic attack, practice diaphragmatic box breathing (inhale 4 seconds, hold 4 seconds, exhale 4 seconds, hold 4 seconds) and sensory grounding techniques (5-4-3-2-1 method). Long-term clinical management involves Cognitive Behavioral Therapy (CBT) and, when clinically indicated by a psychiatrist, SSRIs (like Sertraline or Escitalopram)."
+  },
+  {
+    "id": "CD-1010",
+    "specialty": "Pediatrics / General Family Medicine",
+    "symptoms": ["pediatric fever", "child fever", "baby fever", "high fever", "ear infection", "crying child"],
+    "patient_query": "My 3-year-old child has a fever of 102.5°F (39.2°C), is tugging at her right ear, and is crying when swallowing. What should I give her?",
+    "doctor_response": "The combination of pediatric fever, ear tugging (otalgia), and irritability when swallowing is highly indicative of Acute Otitis Media (middle ear infection) or viral tonsillopharyngitis. For pediatric fever and ear discomfort, weight-based pediatric Acetaminophen (10-15 mg/kg every 4-6 hours) or weight-based pediatric Ibuprofen (10 mg/kg every 6-8 hours in infants over 6 months) are effective antipyretics and analgesics. NEVER give Aspirin to children or adolescents due to the risk of Reye's syndrome (a severe, potentially fatal liver and brain disorder). Keep the child well-hydrated with fluids or oral rehydration solutions. A pediatrician must examine the tympanic membrane with an otoscope to determine if oral antibiotic therapy (such as Amoxicillin) is required for bacterial otitis media."
+  },
+  {
+    "id": "CD-1011",
+    "specialty": "Nephrology / Urology",
+    "symptoms": ["kidney stones", "flank pain", "back pain radiating to groin", "blood in urine", "hematuria", "painful urination", "dysuria"],
+    "patient_query": "I have sudden, excruciating sharp pain on the right side of my lower back radiating down to my groin, and I noticed pinkish tinge in my urine.",
+    "doctor_response": "The acute presentation of severe unilateral flank pain radiating to the lower quadrant/groin combined with gross hematuria (blood in urine) is classic for Nephrolithiasis (kidney stones/ureteral colic). Pain is caused by peristaltic spasms of the ureter attempting to pass the crystalline calculus. You require urgent clinical assessment including a Non-Contrast CT KUB (Kidneys, Ureters, Bladder) or renal ultrasound to determine stone size and location. Stones < 5 mm generally pass spontaneously with high fluid intake (2.5-3 liters/day), alpha-blockers like Tamsulosin (to relax ureteral smooth muscle), and potent analgesics (NSAIDs like Ketorolac). If accompanied by fever, chills, or inability to urinate, seek emergency care immediately due to risk of obstructive pyelonephritis."
+  },
+  {
+    "id": "CD-1012",
+    "specialty": "Gynecology / Obstetrics",
+    "symptoms": ["pelvic pain", "irregular period", "heavy menstrual bleeding", "cramps", "menorrhagia", "dysmenorrhea", "endometriosis"],
+    "patient_query": "I have extremely debilitating pelvic pain during my menstrual cycles, heavy bleeding that soaks pads every two hours, and chronic lower abdominal discomfort.",
+    "doctor_response": "Debilitating dysmenorrhea (painful periods) accompanied by menorrhagia (heavy menstrual bleeding) and chronic pelvic discomfort should be evaluated for Endometriosis, Uterine Fibroids (leiomyomas), or Adenomyosis. Endometriosis occurs when endometrial-like tissue grows outside the uterine cavity, responding to cyclical hormones and causing local inflammation, adhesions, and severe pain. Diagnostic evaluation typically begins with a transvaginal pelvic ultrasound, though definitive diagnosis of endometriosis often requires laparoscopic visualization. Initial clinical management may involve NSAIDs initiated 1-2 days before menses and hormonal contraceptives (combined oral contraceptives or progestin-only IUDs like Mirena) to suppress endometrial proliferation."
+  },
+  {
+    "id": "CD-1013",
+    "specialty": "Pharmacology / Drug Interactions",
+    "symptoms": ["antibiotic side effects", "drug interaction", "alcohol with medicine", "metronidazole", "amoxicillin side effects", "nausea after pill"],
+    "patient_query": "I was prescribed Metronidazole for a dental infection. Can I drink a glass of wine or beer while taking this medication?",
+    "doctor_response": "CRITICAL PHARMACOLOGICAL WARNING: Absolutely DO NOT consume alcohol (including wine, beer, spirits, or even alcohol-containing cough syrups/mouthwashes) while taking Metronidazole, and for at least 72 hours after completing the course. Metronidazole inhibits the enzyme acetaldehyde dehydrogenase, causing a severe Disulfiram-like reaction when combined with alcohol. Symptoms include violent nausea, severe vomiting, flushing of the face and neck, throbbing headaches, tachycardia (rapid heart rate), shortness of breath, and potentially profound hypotension. Always take oral antibiotics with a full glass of water and complete the prescribed duration even if symptoms improve early."
+  },
+  {
+    "id": "CD-1014",
+    "specialty": "Ophthalmology",
+    "symptoms": ["pink eye", "conjunctivitis", "red eye", "eye discharge", "itchy eyes", "crusty eyelashes", "blurred vision"],
+    "patient_query": "My left eye woke up completely red, itchy, and stuck shut with yellowish-green crust. Is this contagious pink eye and what drops do I need?",
+    "doctor_response": "Your presentation characterized by unilateral conjunctival injection (redness) accompanied by thick purulent (yellow-green) discharge and morning crusting is highly characteristic of Acute Bacterial Conjunctivitis ('pink eye'), commonly caused by Staphylococcus aureus, Streptococcus pneumoniae, or Haemophilus influenzae. Bacterial conjunctivitis is highly contagious through direct contact. Practice strict hygiene: wash hands frequently, do not rub the eye, avoid sharing towels, and discard used eye makeup. A physician or ophthalmologist will typically prescribe topical antibiotic ophthalmic drops or ointment (such as Ofloxacin, Trimethoprim-Polymyxin B, or Erythromycin). If you experience severe ocular pain, photophobia, or sudden vision loss, seek immediate ophthalmologic emergency care to rule out keratitis or acute glaucoma."
+  },
+  {
+    "id": "CD-1015",
+    "specialty": "Dermatology / Oncology",
+    "symptoms": ["mole changes", "melanoma", "skin cancer check", "dark mole", "bleeding mole", "irregular border skin"],
+    "patient_query": "I noticed a dark mole on my shoulder that has recently grown larger, has uneven borders with multiple shades of brown and black, and sometimes itches.",
+    "doctor_response": "CRITICAL DERMATOLOGICAL ALERT: Any pigmented cutaneous lesion exhibiting rapid growth, irregular borders, and color variegation warrants prompt in-person dermatological evaluation to rule out Malignant Melanoma. Dermatologists utilize the ABCDE criteria for screening pigmented lesions: A - Asymmetry (one half does not match the other), B - Border irregularity (ragged, notched, or blurred edges), C - Color variation (shades of black, brown, red, white, or blue), D - Diameter greater than 6 mm (size of a pencil eraser), and E - Evolving (changing in size, shape, color, or symptoms like itching/bleeding). Please schedule an urgent full-body skin examination and dermoscopy. DO NOT attempt to scratch, burn, or remove the lesion at home. If suspicious, an excisional biopsy will be performed for histopathological evaluation."
+  },
+  {
+    "id": "CD-1016",
+    "specialty": "Cardiology / Hypertension",
+    "symptoms": ["high blood pressure", "hypertension", "dizziness", "headache", "blood pressure 160/100", "palpitations"],
+    "patient_query": "My home blood pressure monitor consistently reads around 162/98 mmHg. I occasionally get morning headaches and feel lightheaded. Is this dangerous?",
+    "doctor_response": "Consistently elevated blood pressure readings around 162/98 mmHg fall into Stage 2 Hypertension (defined as systolic >= 140 mmHg or diastolic >= 90 mmHg). Chronic uncontrolled hypertension is known as the 'silent killer' because it progressively accelerates vascular atherosclerosis, significantly increasing long-term risks of stroke, myocardial infarction, left ventricular hypertrophy, and hypertensive nephrosclerosis. The morning headaches and lightheadedness could be related to nocturnal hypertensive surges or vascular tone changes. You should schedule a clinical appointment for comprehensive cardiovascular assessment (ECG, renal function panel, lipid profile, and urinalysis for microalbuminuria). Management involves lifestyle modifications (DASH diet, sodium restriction < 2g/day, regular aerobic exercise) combined with antihypertensive pharmacotherapy (such as ACE inhibitors/ARBs, Calcium Channel Blockers, or Thiazide diuretics prescribed by your doctor)."
+  },
+  {
+    "id": "CD-1017",
+    "specialty": "Rheumatology / Orthopedics",
+    "symptoms": ["joint stiffness", "rheumatoid arthritis", "swollen fingers", "morning stiffness", "hand pain", "autoimmune joint pain"],
+    "patient_query": "Both of my hands feel extremely stiff every morning for over an hour. My knuckle joints are swollen, tender, and warm to the touch.",
+    "doctor_response": "Bilateral, symmetrical joint swelling and tenderness involving the small joints of the hands (specifically the metacarpophalangeal and proximal interphalangeal joints) associated with prolonged morning stiffness lasting > 60 minutes is the hallmark clinical presentation of Rheumatoid Arthritis (RA), an autoimmune inflammatory arthropathy. Unlike osteoarthritis (which worsens with use and has brief < 15 minute morning stiffness), RA involves synovial membrane inflammation that can lead to joint erosion and deformity if untreated. Diagnostic evaluation requires rheumatological blood serologies: Rheumatoid Factor (RF), Anti-Cyclic Citrullinated Peptide antibodies (Anti-CCP - highly specific), Erythrocyte Sedimentation Rate (ESR), and C-Reactive Protein (CRP). Early intervention by a rheumatologist using Disease-Modifying Antirheumatic Drugs (DMARDs like Methotrexate) is crucial to halt progressive radiographic joint damage."
+  },
+  {
+    "id": "CD-1018",
+    "specialty": "Gastroenterology / Hepatology",
+    "symptoms": ["acid reflux", "heartburn", "gerd", "chest burning after eating", "sour taste in mouth", "difficulty swallowing"],
+    "patient_query": "Every night after dinner when I lie down in bed, I get a severe burning pain in my chest and a sour acid taste coming up into my throat.",
+    "doctor_response": "Your symptoms of postprandial retrosternal burning (heartburn) aggravated by recumbency combined with acid regurgitation are classic for Gastroesophageal Reflux Disease (GERD). GERD results from transient relaxation or mechanical incompetence of the lower esophageal sphincter (LES), allowing gastric hydrochloric acid and pepsin to reflux into and erode the sensitive squamous epithelium of the esophagus. First-line management begins with conservative lifestyle measures: avoid lying down within 3 hours after meals, elevate the head of your bed by 6-8 inches, reduce dietary triggers (caffeine, alcohol, fatty/spicy foods, chocolate, mint), and avoid late-night snacking. For pharmacological control, over-the-counter H2 receptor antagonists (like Famotidine) or Proton Pump Inhibitors (PPIs like Omeprazole 20mg taken 30 minutes before breakfast) effectively suppress gastric acid secretion. If dysphagia (difficulty swallowing) or unintentional weight loss occurs, an upper endoscopy (EGD) is mandatory."
+  },
+  {
+    "id": "CD-1019",
+    "specialty": "Pediatrics / Pulmonology",
+    "symptoms": ["asthma attack", "child wheezing", "difficulty breathing in child", "coughing at night child", "inhaler use"],
+    "patient_query": "My 7-year-old son started wheezing loudly and coughing incessantly after playing with a dog. His chest looks like it is pulling in when he breathes.",
+    "doctor_response": "CRITICAL PEDIATRIC ALERT: Wheezing, incessant coughing, and intercostal/subcostal retractions ('chest pulling in') in response to an animal dander allergen are signs of an Acute Pediatric Asthma Exacerbation (bronchospasm and airway inflammation). Retractions indicate increased work of breathing. Immediately administer his prescribed short-acting beta-agonist (SABA) rescue inhaler (Albuterol / Salbutamol MDI using a pediatric valved holding chamber / spacer — typically 2 to 4 puffs, separated by 1 minute each). Keep him upright and calm. If his wheezing does not significantly improve within 15-20 minutes after Albuterol, or if you observe nasal flaring, bluish discoloration around the lips (cyanosis), or inability to speak in full sentences, call 911 or take him to the nearest Emergency Department immediately for nebulized bronchodilators and systemic corticosteroids."
+  },
+  {
+    "id": "CD-1020",
+    "specialty": "Endocrinology / Thyroid",
+    "symptoms": ["thyroid", "hypothyroidism", "weight gain", "cold intolerance", "hair loss", "chronic fatigue", "dry skin"],
+    "patient_query": "I have gained 15 pounds over the last 4 months despite eating less, my hair is shedding rapidly, I feel cold even when the room is warm, and I am exhausted.",
+    "doctor_response": "The constellation of unexplained weight gain, cold intolerance, diffuse alopecia (hair shedding), dry skin, and profound lethargy strongly suggests Primary Hypothyroidism, most frequently caused by Hashimoto's Thyroiditis (an autoimmune destruction of the thyroid gland). When circulating thyroid hormones (T3 and T4) drop, systemic metabolic rate slows down across all organ systems. To confirm diagnosis, ask your physician to order a Thyroid Function Panel: Serum Thyroid-Stimulating Hormone (TSH) and Free Thyroxine (Free T4). In primary hypothyroidism, TSH is markedly elevated (as the pituitary gland attempts to stimulate the underactive thyroid) while Free T4 is low. Treatment is straightforward and highly effective: daily oral hormone replacement therapy with synthetic Levothyroxine (T4), titrated periodically based on follow-up TSH levels to restore euthyroid metabolic balance."
+  }
+]
