@@ -1,0 +1,61 @@
+# Vitalis AI Mobile App Implementation Plan
+
+Building a mobile app for Vitalis AI in a separate repository is an excellent idea. Since you already have a functional web application and backend, we can treat your current repository as the "Backend API" and build the mobile app as a separate "Client".
+
+Here is the comprehensive implementation plan for building the mobile app.
+
+## 1. Technology Stack Recommendation
+
+Since your current project heavily relies on the JavaScript ecosystem (Node.js, Vercel Serverless Functions), I highly recommend using **React Native with Expo** for the mobile app.
+
+* **Why React Native (Expo)?**
+  * You only need to write JavaScript/TypeScript.
+  * You can deploy to both iOS and Android simultaneously.
+  * Excellent integration with Firebase Authentication (which you are already using).
+  * Extremely fast development cycle with hot-reloading on your physical phone.
+
+## 2. System Architecture
+
+By using a separate repository, the architecture will look like this:
+
+**Repository 1: Web App & Backend (Your current repo)**
+- Hosts the HTML/CSS/JS frontend.
+- Hosts the Serverless Node.js APIs (`/api/chat`, `/api/saveMessage`, `/api/getHistory`).
+- Connects to NeonDB.
+- *Deployed on Vercel (e.g., `https://vitalis-ai.vercel.app`)*
+
+**Repository 2: Mobile App (The new repo)**
+- Hosts the React Native Expo code.
+- Uses Firebase Auth SDK to log the user in.
+- Makes standard `fetch()` HTTP requests to your Vercel deployment URL (e.g., `fetch('https://vitalis-ai.vercel.app/api/getHistory?user_id=123')`) instead of directly talking to the database.
+
+> [!IMPORTANT]
+> **CORS Configuration:** We will need to update your Vercel API functions in the current repository to allow Cross-Origin Resource Sharing (CORS). Right now, they only expect traffic from the web app. The mobile app will be considered an external origin.
+
+## 3. Step-by-Step Implementation Strategy
+
+### Phase 1: Preparation (Current Repo)
+1. **Enable CORS:** Update all Vercel Serverless Functions (`api/*.js`) to include CORS headers so the mobile app can communicate with them.
+2. **Deploy Backend:** Ensure the latest API changes are deployed to Vercel production.
+
+### Phase 2: Initialization (New Repo)
+1. Create a new folder outside of your current project (e.g., `Vitalis-App`).
+2. Run `npx create-expo-app@latest ./` to initialize the React Native project.
+3. Initialize a new git repository and push it to a new GitHub repo (`Vitalis-App`).
+
+### Phase 3: Core App Development
+1. **Firebase Auth:** Install the Firebase SDK for React Native and implement the Google Sign-In flow natively.
+2. **API Integration:** Create an API service file in the app that points to your live Vercel URL.
+3. **UI/UX Design:** Build out the glassmorphism screens in React Native:
+   - Login Screen
+   - Dashboard (Past Consultations & Quick Prompts)
+   - Chat Interface (Messages, Voice Input)
+
+## Open Questions for You
+
+Before we proceed, I need your input on a few things:
+1. **Do you agree with using React Native (Expo)?** Or do you have a preference for Flutter, Swift (iOS only), or Kotlin (Android only)?
+2. **Where do you want to create the new repo?** Please provide the absolute path to the directory on your computer where you'd like me to initialize the new mobile app project (e.g., `d:\B.Tech CSE\Projects\Vitalis-App`).
+
+## User Review Required
+Please review this architecture plan. If you approve of the tech stack and architecture, provide the directory path for the new app, and I will begin Phase 1 (updating your current APIs with CORS) and Phase 2 (initializing the new mobile app repository)!

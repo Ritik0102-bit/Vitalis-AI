@@ -717,8 +717,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // We will call our Hugging Face Space directly to bypass Vercel timeouts!
-            const apiPromise = fetch('https://ritik0102-vitalis-api.hf.space/chat', {
+            // Call our fast Vercel backend (/api/chat) which securely communicates with Groq API (or custom LLM)
+            const apiPromise = fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
